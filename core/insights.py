@@ -150,3 +150,113 @@ def find_subgroup_disparities(
             metrics={"group": str(top_group), "group_mean": round(float(highest["mean"]), 2), "baseline": round(float(global_mean), 2)},
         )
     return None
+
+
+
+def generate_dataset_insights(
+    df: pd.DataFrame,
+    health: Optional[Any] = None,
+    eda: Optional[Any] = None,
+    max_insights: int = 6
+) -> InsightReport:
+    """
+    Automated scan of the entire dataset to extract prioritized, actionable intelligence insights.
+    Works completely offline without requiring an external LLM.
+    """
+    insights: List[ActionableInsight] = []
+    n_rows, n_cols = df.shape
+
+    # 1. Check Data Health / Completeness Risks
+    null_counts = df.isna().sum()
+    high_null_cols = null_counts[null_counts / n_rows > 0.15]
+    if len(high_null_cols) > 0:
+        worst_col = high_null_cols.sort_values(ascending=False).index[0]
+        worst_pct = round((null_counts[worst_col] / n_rows) * 100, 1)
+        insights.append(ActionableInsight(
+            id="risk_high_missingness",
+            headline=f"Data Completeness Deficit: '{worst_col}' Has {worst_pct}% Missing Values",
+            narrative=(
+                f"{len(high_null_cols)} columns exceed a 15% missing data threshold. "
+                f"Column '{worst_col}' lacks {worst_pct}% of expected values, which can introduce bias into statistical inferences."
+            ),
+            category=InsightCategory.RISK,
+            severity=InsightSeverity.CRITICAL if worst_pct > 40 else InsightSeverity.HIGH,
+            impact_score=9.0 if worst_pct > 40 else 7.5,
+            suggested_query=f"Analyze missing value distribution in {worst_col}",
+            metrics={"missing_columns": len(high_null_cols), "worst_column": worst_col, "worst_null_pct": worst_pct},
+        ))
+
+    # 2. Check Duplication
+    n_dups = int(df.duplicated().sum())
+    if n_dups > 0:
+        dup_pct = round((n_dups / n_rows) * 100, 1)
+        insights.append(ActionableInsight(
+            id="risk_duplicates",
+            headline=f"Redundant Observations: {n_dups:,} Duplicate Rows Detected ({dup_pct}%)",
+            narrative=(
+                f"{n_dups:,} identical records were discovered. Duplicate rows artificially inflate sample sizes and distort standard errors."
+            ),
+            category=InsightCategory.RISK,
+            severity=InsightSeverity.HIGH if dup_pct > 5 else InsightSeverity.MEDIUM,
+            impact_score=7.0,
+            suggested_query="How many duplicate rows are in this dataset and which columns cause them?",
+            metrics={"duplicates": n_dups, "duplicate_rate": dup_pct},
+        ))
+
+    # 3. Check Pareto Driver candidates across categorical and numeric features
+    cat_cols = list(df.select_dtypes(exclude=[np.number]).columns)
+    num_cols = list(df.select_dtypes(include=[np.number]).columns)
+
+    for c_col in cat_cols[:4]:
+        for n_col in num_cols[:4]:
+            pareto = find_pareto_drivers(df, c_col, n_col)
+            if pareto:
+                insights.append(pareto)
+                break  # one pareto per cat_col is sufficient
+
+    # 4. Check Subgroup Disparities
+    for c_col in cat_cols[:3]:
+        for n_col in num_cols[:3]:
+            disparity = find_subgroup_disparities(df, c_col, n_col)
+            if disparity:
+                insights.append(disparity)
+                break
+
+    # 5. Check Dominance / Skewness in Numeric Columns
+    for n_col in num_cols[:5]:
+        s = df[n_col].dropna()
+        if len(s) >= 10:
+            skew = s.skew()
+            if abs(skew) > 2.5:
+                direction = "Right" if skew > 0 else "Left"
+                insights.append(ActionableInsight(
+                    id=f"skew_{n_col}",
+                    headline=f"Extreme {direction}-Skew Detected in '{n_col}' (Skewness = {skew:.2f})",
+                    narrative=(
+                        f"The distribution of '{n_col}' is heavily skewed ({direction}). "
+                        f"Consider applying a log1p or Yeo-Johnson transform in the Feature Studio prior to linear modeling."
+                    ),
+                    category=InsightCategory.ANOMALY,
+                    severity=InsightSeverity.MEDIUM,
+                    impact_score=6.5,
+                    suggested_query=f"Show a histogram and boxplot for {n_col}",
+                    metrics={"column": n_col, "skewness": round(float(skew), 2)},
+                ))
+                break
+
+    # Sort insights by impact score descending
+    insights.sort(key=lambda x: x.impact_score, reverse=True)
+    selected_insights = insights[:max_insights]
+
+    crit_count = sum(1 for i in selected_insights if i.severity == InsightSeverity.CRITICAL)
+    summary = (
+        f"Autonomous discovery identified {len(selected_insights)} priority insights "
+        f"({crit_count} critical) across {n_rows:,} records and {n_cols} attributes."
+    )
+
+    return InsightReport(
+        total_insights=len(selected_insights),
+        critical_count=crit_count,
+        insights=selected_insights,
+        executive_summary=summary,
+    )
