@@ -999,6 +999,66 @@ with tab_automl:
             leaderboard_rows.append(row)
         st.dataframe(pd.DataFrame(leaderboard_rows), use_container_width=True, hide_index=True)
 
+        # Feature Importance & Live Prediction Playground
+        col_chart, col_play = st.columns([1, 1])
+        with col_chart:
+            st.markdown("<div style='font-size:14px; font-weight:600; color:#0F172A; margin:16px 0 10px 0;'>Feature Influence & Drivers</div>", unsafe_allow_html=True)
+            best_eval = next((m for m in automl_res.candidate_models if m.model_name == automl_res.best_model_name), None)
+            if best_eval and best_eval.feature_importances:
+                imp_df = pd.DataFrame(best_eval.feature_importances)
+                fig_imp = px.bar(
+                    imp_df.sort_values(by="importance", ascending=True),
+                    x="importance",
+                    y="feature",
+                    orientation="h",
+                    color="importance",
+                    color_continuous_scale=["#E0E7FF", "#4F46E5"],
+                    title=f"Top Drivers for {automl_res.target_column}",
+                )
+                fig_imp.update_layout(
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    plot_bgcolor="rgba(0,0,0,0)",
+                    font_family="Inter",
+                    height=360,
+                    margin=dict(l=20, r=20, t=40, b=20),
+                    coloraxis_showscale=False,
+                )
+                st.plotly_chart(fig_imp, use_container_width=True)
+            else:
+                st.info("Feature importances not directly extractable for this model architecture.")
+
+        with col_play:
+            st.markdown("<div style='font-size:14px; font-weight:600; color:#0F172A; margin:16px 0 10px 0;'>Interactive Prediction Sandbox</div>", unsafe_allow_html=True)
+            with st.expander("Configure Sample Input Values", expanded=True):
+                user_inputs = {}
+                feature_subset = automl_res.feature_columns[:8]  # top 8 for clean UI
+                for feat in feature_subset:
+                    s_col = df[feat].dropna()
+                    if pd.api.types.is_numeric_dtype(s_col):
+                        min_v = float(s_col.min())
+                        max_v = float(s_col.max())
+                        mean_v = float(s_col.mean())
+                        user_inputs[feat] = st.number_input(f"{feat}", value=round(mean_v, 2), key=f"pred_in_{feat}")
+                    else:
+                        top_vals = list(s_col.astype(str).unique()[:10])
+                        user_inputs[feat] = st.selectbox(f"{feat}", options=top_vals, key=f"pred_in_{feat}")
+
+                if st.button("Run Model Inference", type="primary", use_container_width=True, key="btn_exec_prediction"):
+                    single_res = predict_single(
+                        pipeline=automl_res.best_pipeline,
+                        input_values=user_inputs,
+                        feature_columns=automl_res.feature_columns,
+                        task_type=automl_res.task_type,
+                        classes=automl_res.classes_,
+                    )
+                    st.markdown(f"""
+                    <div style="background:#F8FAFC; border:1px solid #CBD5E1; border-radius:10px; padding:12px; margin-top:10px; text-align:center;">
+                        <div style="font-size:11px; font-weight:600; color:#64748B; text-transform:uppercase;">PREDICTED {automl_res.target_column.upper()}</div>
+                        <div style="font-size:22px; font-weight:700; color:#4F46E5; margin-top:2px;">{single_res.prediction}</div>
+                        {"<div style='font-size:12px; color:#10B981; font-weight:600; margin-top:4px;'>Confidence: " + str(round(single_res.confidence * 100, 1)) + "%</div>" if single_res.confidence is not None else ""}
+                    </div>
+                    """, unsafe_allow_html=True)
+
 
 with tab_explorer:
     st.markdown(f"""
