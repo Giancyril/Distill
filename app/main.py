@@ -1046,6 +1046,43 @@ with tab_features:
             except Exception as e:
                 st.error(f"Transformation failed: {e}")
 
+        # Time-Travel Controls & Audit Log
+        st.markdown("<div style='height:16px;'></div>", unsafe_allow_html=True)
+        col_tt1, col_tt2, col_tt3 = st.columns([1, 1, 3])
+        with col_tt1:
+            if st.button("&#x21A9; Undo Transform", disabled=not vm.can_undo, use_container_width=True, key="btn_undo_tt"):
+                vm.undo()
+                st.session_state.dataset = vm.current_df
+                st.rerun()
+        with col_tt2:
+            if st.button("Redo &#x21AA;", disabled=not vm.can_redo, use_container_width=True, key="btn_redo_tt"):
+                vm.redo()
+                st.session_state.dataset = vm.current_df
+                st.rerun()
+        with col_tt3:
+            st.markdown(f"""
+            <div style="font-size:13px; color:#475569; padding-top:6px;">
+                Active Snapshot: <strong>v{vm.current_snapshot.version_id} ({vm.current_snapshot.name})</strong> &bull; Total History: {len(vm.history)} snapshots
+            </div>
+            """, unsafe_allow_html=True)
+
+        # Before & After Diff
+        if len(vm.history) > 1:
+            diff_res = compute_dataset_diff(vm.history[0].df, vm.current_df)
+            st.markdown("<div style='font-size:14px; font-weight:600; color:#0F172A; margin:16px 0 8px 0;'>Net Dataset Diff (vs Baseline Raw)</div>", unsafe_allow_html=True)
+            col_d1, col_d2, col_d3, col_d4 = st.columns(4)
+            with col_d1:
+                st.metric("Total Rows", f"{diff_res.rows_after:,}", delta=f"{diff_res.rows_delta:+d}" if diff_res.rows_delta != 0 else None)
+            with col_d2:
+                st.metric("Total Dimensions", f"{diff_res.cols_after}", delta=f"{diff_res.cols_delta:+d}" if diff_res.cols_delta != 0 else None)
+            with col_d3:
+                st.metric("Missing Data Cells", f"{diff_res.missing_after:,}", delta=f"{diff_res.missing_delta:+d}" if diff_res.missing_delta != 0 else None, delta_color="inverse")
+            with col_d4:
+                st.metric("Memory Footprint", f"{diff_res.memory_after_kb:.1f} KB")
+
+        st.markdown("<div style='font-size:14px; font-weight:600; color:#0F172A; margin:16px 0 8px 0;'>Immutable Snapshot Audit Trail</div>", unsafe_allow_html=True)
+        st.dataframe(pd.DataFrame(vm.get_audit_log()), use_container_width=True, hide_index=True)
+
 with tab_automl:
     st.markdown("""
     <div class="card-header-bar">
