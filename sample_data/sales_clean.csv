@@ -1,0 +1,251 @@
+order_id,order_date,region,customer_segment,category,product,quantity,unit_price,revenue,profit
+ORD-1000,2024-01-01,Europe,Startup,AI Solutions,NeuralBot API,11,400.86,4409.46,1934.61
+ORD-1001,2024-01-02,Latin America,Startup,AI Solutions,Copilot Studio,11,439.78,4837.58,2130.69
+ORD-1002,2024-01-03,Europe,Government,Cloud Storage,CloudDrive Business,2,374.9,749.8,431.45
+ORD-1003,2024-01-05,Latin America,Enterprise,Developer Tools,CodePiper CI,1,186.91,186.91,76.61
+ORD-1004,2024-01-06,Latin America,Government,Enterprise Software,HR Core,11,229.94,2529.34,553.08
+ORD-1005,2024-01-08,Asia Pacific,Government,AI Solutions,AutoVision Suite,14,403.33,5646.62,1580.32
+ORD-1006,2024-01-09,North America,Startup,Developer Tools,CodePiper CI,3,436.97,1310.91,618.91
+ORD-1007,2024-01-11,Europe,Enterprise,Cloud Storage,CloudDrive Business,12,303.48,3641.76,1289.79
+ORD-1008,2024-01-12,Asia Pacific,Startup,Cloud Storage,Cold Vault,12,104.92,1259.04,501.19
+ORD-1009,2024-01-14,Europe,Mid-Market,Cloud Storage,CloudDrive Business,4,132.01,528.04,265.15
+ORD-1010,2024-01-15,Europe,Government,Cloud Storage,S3 Glacier Sync,4,133.18,532.72,313.15
+ORD-1011,2024-01-17,Asia Pacific,Government,Cloud Storage,S3 Glacier Sync,14,467.0,6538.0,3209.56
+ORD-1012,2024-01-18,Latin America,Enterprise,Cloud Storage,Cold Vault,12,70.35,844.2,278.7
+ORD-1013,2024-01-20,Latin America,Government,Cloud Storage,Cold Vault,5,314.04,1570.2,920.3
+ORD-1014,2024-01-21,Asia Pacific,Enterprise,Enterprise Software,ERP Suite Pro,13,410.99,5342.87,1227.9
+ORD-1015,2024-01-22,Asia Pacific,Enterprise,Developer Tools,CodePiper CI,12,182.07,2184.84,449.27
+ORD-1016,2024-01-24,Asia Pacific,Mid-Market,Developer Tools,ContainerStack,3,397.07,1191.21,273.52
+ORD-1017,2024-01-25,Latin America,Startup,Enterprise Software,HR Core,9,330.48,2974.32,988.54
+ORD-1018,2024-01-27,Europe,Startup,AI Solutions,AutoVision Suite,8,349.67,2797.36,1221.1
+ORD-1019,2024-01-28,North America,Enterprise,AI Solutions,NeuralBot API,3,103.82,311.46,151.15
+ORD-1020,2024-01-30,Asia Pacific,Mid-Market,Cloud Storage,Cold Vault,14,272.21,3810.94,1559.03
+ORD-1021,2024-01-31,Latin America,Enterprise,Cloud Storage,CloudDrive Business,3,64.14,192.42,87.47
+ORD-1022,2024-02-02,Asia Pacific,Enterprise,Developer Tools,DebugPro X,5,162.18,810.9,295.29
+ORD-1023,2024-02-03,Europe,Mid-Market,Developer Tools,CodePiper CI,7,180.39,1262.73,333.98
+ORD-1024,2024-02-05,Latin America,Government,Enterprise Software,CRM Enterprise,9,97.47,877.23,335.64
+ORD-1025,2024-02-06,Latin America,Enterprise,Developer Tools,DebugPro X,14,292.7,4097.8,2143.05
+ORD-1026,2024-02-08,North America,Government,AI Solutions,AutoVision Suite,1,172.46,172.46,79.17
+ORD-1027,2024-02-09,North America,Mid-Market,Enterprise Software,ERP Suite Pro,3,53.13,159.39,64.44
+ORD-1028,2024-02-11,Asia Pacific,Mid-Market,Enterprise Software,ERP Suite Pro,3,171.24,513.72,152.91
+ORD-1029,2024-02-12,Latin America,Government,Developer Tools,CodePiper CI,4,213.63,854.52,503.07
+ORD-1030,2024-02-13,Latin America,Enterprise,Cloud Storage,Cold Vault,2,370.52,741.04,192.1
+ORD-1031,2024-02-15,North America,Government,AI Solutions,NeuralBot API,2,276.21,552.42,121.86
+ORD-1032,2024-02-16,Europe,Government,Enterprise Software,ERP Suite Pro,3,356.32,1068.96,440.81
+ORD-1033,2024-02-18,North America,Startup,Cloud Storage,Cold Vault,4,86.38,345.52,120.19
+ORD-1034,2024-02-19,Asia Pacific,Government,Cloud Storage,CloudDrive Business,4,492.54,1970.16,708.33
+ORD-1035,2024-02-21,North America,Startup,Developer Tools,CodePiper CI,9,194.35,1749.15,480.33
+ORD-1036,2024-02-22,Asia Pacific,Government,Developer Tools,ContainerStack,4,57.46,229.84,93.05
+ORD-1037,2024-02-24,Asia Pacific,Mid-Market,Developer Tools,ContainerStack,4,473.24,1892.96,679.63
+ORD-1038,2024-02-25,Asia Pacific,Startup,Developer Tools,CodePiper CI,11,203.48,2238.28,549.25
+ORD-1039,2024-02-27,Latin America,Enterprise,Cloud Storage,S3 Glacier Sync,3,152.85,458.55,123.8
+ORD-1040,2024-02-28,North America,Enterprise,Developer Tools,CodePiper CI,2,498.31,996.62,584.19
+ORD-1041,2024-03-01,Latin America,Government,Developer Tools,ContainerStack,7,202.56,1417.92,481.64
+ORD-1042,2024-03-02,North America,Government,AI Solutions,AutoVision Suite,8,449.5,3596.0,1943.18
+ORD-1043,2024-03-04,Europe,Enterprise,Developer Tools,DebugPro X,8,322.89,2583.12,526.13
+ORD-1044,2024-03-05,Europe,Mid-Market,AI Solutions,NeuralBot API,13,177.76,2310.88,744.44
+ORD-1045,2024-03-06,Europe,Enterprise,AI Solutions,NeuralBot API,9,129.17,1162.53,240.91
+ORD-1046,2024-03-08,Latin America,Startup,Developer Tools,ContainerStack,3,345.93,1037.79,443.47
+ORD-1047,2024-03-09,Europe,Enterprise,AI Solutions,AutoVision Suite,7,162.71,1138.97,496.53
+ORD-1048,2024-03-11,Europe,Enterprise,AI Solutions,AutoVision Suite,8,334.01,2672.08,1383.94
+ORD-1049,2024-03-12,Asia Pacific,Government,Developer Tools,ContainerStack,1,137.86,137.86,67.41
+ORD-1050,2024-03-14,Europe,Enterprise,AI Solutions,NeuralBot API,1,497.55,497.55,193.04
+ORD-1051,2024-03-15,North America,Mid-Market,Cloud Storage,Cold Vault,12,56.96,683.52,390.51
+ORD-1052,2024-03-17,North America,Enterprise,Enterprise Software,HR Core,3,491.15,1473.45,339.1
+ORD-1053,2024-03-18,North America,Mid-Market,Developer Tools,ContainerStack,1,192.61,192.61,51.58
+ORD-1054,2024-03-20,Europe,Government,AI Solutions,AutoVision Suite,10,468.51,4685.1,1068.98
+ORD-1055,2024-03-21,Europe,Mid-Market,AI Solutions,AutoVision Suite,7,113.04,791.28,322.31
+ORD-1056,2024-03-23,North America,Mid-Market,Enterprise Software,ERP Suite Pro,9,366.12,3295.08,1132.84
+ORD-1057,2024-03-24,Latin America,Mid-Market,AI Solutions,AutoVision Suite,3,165.29,495.87,220.47
+ORD-1058,2024-03-26,Latin America,Mid-Market,AI Solutions,NeuralBot API,4,409.23,1636.92,752.96
+ORD-1059,2024-03-27,Europe,Mid-Market,Developer Tools,DebugPro X,12,448.98,5387.76,1137.07
+ORD-1060,2024-03-28,Europe,Enterprise,Developer Tools,ContainerStack,6,197.67,1186.02,310.76
+ORD-1061,2024-03-30,Europe,Startup,Cloud Storage,S3 Glacier Sync,10,63.73,637.3,136.98
+ORD-1062,2024-03-31,Latin America,Government,Cloud Storage,Cold Vault,12,196.99,2363.88,1255.57
+ORD-1063,2024-04-02,Latin America,Mid-Market,Developer Tools,CodePiper CI,7,88.41,618.87,136.57
+ORD-1064,2024-04-03,Europe,Government,AI Solutions,Copilot Studio,7,112.26,785.82,198.89
+ORD-1065,2024-04-05,Latin America,Mid-Market,Cloud Storage,S3 Glacier Sync,3,407.83,1223.49,377.24
+ORD-1066,2024-04-06,Asia Pacific,Enterprise,AI Solutions,AutoVision Suite,5,132.95,664.75,154.45
+ORD-1067,2024-04-08,Europe,Government,Developer Tools,CodePiper CI,1,127.98,127.98,33.6
+ORD-1068,2024-04-09,Latin America,Enterprise,Cloud Storage,S3 Glacier Sync,9,347.09,3123.81,974.55
+ORD-1069,2024-04-11,Latin America,Mid-Market,AI Solutions,Copilot Studio,5,325.27,1626.35,598.24
+ORD-1070,2024-04-12,Latin America,Enterprise,Developer Tools,ContainerStack,5,104.07,520.35,175.23
+ORD-1071,2024-04-14,Latin America,Government,AI Solutions,NeuralBot API,14,434.96,6089.44,2931.84
+ORD-1072,2024-04-15,Europe,Enterprise,Cloud Storage,S3 Glacier Sync,5,263.06,1315.3,354.18
+ORD-1073,2024-04-17,Latin America,Startup,AI Solutions,AutoVision Suite,10,477.12,4771.2,2646.45
+ORD-1074,2024-04-18,North America,Enterprise,Cloud Storage,S3 Glacier Sync,3,276.41,829.23,449.94
+ORD-1075,2024-04-19,Asia Pacific,Government,Developer Tools,ContainerStack,2,61.93,123.86,53.79
+ORD-1076,2024-04-21,Asia Pacific,Startup,Developer Tools,DebugPro X,3,339.48,1018.44,390.37
+ORD-1077,2024-04-22,Latin America,Enterprise,Enterprise Software,HR Core,1,482.54,482.54,271.26
+ORD-1078,2024-04-24,Asia Pacific,Startup,Enterprise Software,HR Core,14,58.2,814.8,193.74
+ORD-1079,2024-04-25,Europe,Mid-Market,Enterprise Software,CRM Enterprise,8,223.43,1787.44,844.83
+ORD-1080,2024-04-27,North America,Startup,AI Solutions,NeuralBot API,7,103.17,722.19,345.71
+ORD-1081,2024-04-28,North America,Enterprise,Enterprise Software,ERP Suite Pro,5,485.41,2427.05,1017.39
+ORD-1082,2024-04-30,North America,Startup,Developer Tools,ContainerStack,1,379.24,379.24,95.22
+ORD-1083,2024-05-01,Asia Pacific,Enterprise,Developer Tools,ContainerStack,14,302.84,4239.76,1252.59
+ORD-1084,2024-05-03,Europe,Government,AI Solutions,NeuralBot API,3,96.41,289.23,162.26
+ORD-1085,2024-05-04,Latin America,Government,Developer Tools,CodePiper CI,6,183.94,1103.64,264.87
+ORD-1086,2024-05-06,Europe,Startup,Enterprise Software,ERP Suite Pro,3,91.08,273.24,89.55
+ORD-1087,2024-05-07,Asia Pacific,Government,Developer Tools,ContainerStack,10,334.33,3343.3,1268.38
+ORD-1088,2024-05-08,North America,Startup,Enterprise Software,HR Core,5,388.57,1942.85,1003.74
+ORD-1089,2024-05-10,Europe,Enterprise,Enterprise Software,ERP Suite Pro,10,488.41,4884.1,2922.51
+ORD-1090,2024-05-11,Latin America,Enterprise,AI Solutions,Copilot Studio,13,207.91,2702.83,667.13
+ORD-1091,2024-05-13,Europe,Enterprise,Cloud Storage,S3 Glacier Sync,12,440.09,5281.08,2827.45
+ORD-1092,2024-05-14,North America,Enterprise,Developer Tools,DebugPro X,9,419.84,3778.56,1823.14
+ORD-1093,2024-05-16,Europe,Government,Enterprise Software,CRM Enterprise,3,311.59,934.77,509.69
+ORD-1094,2024-05-17,Europe,Government,Enterprise Software,HR Core,7,493.7,3455.9,1732.62
+ORD-1095,2024-05-19,Europe,Mid-Market,AI Solutions,Copilot Studio,13,220.09,2861.17,1379.18
+ORD-1096,2024-05-20,Latin America,Mid-Market,AI Solutions,Copilot Studio,14,271.68,3803.52,777.98
+ORD-1097,2024-05-22,Latin America,Mid-Market,Cloud Storage,CloudDrive Business,9,384.9,3464.1,1636.5
+ORD-1098,2024-05-23,Europe,Enterprise,Enterprise Software,HR Core,12,178.57,2142.84,1173.08
+ORD-1099,2024-05-25,Asia Pacific,Enterprise,Cloud Storage,S3 Glacier Sync,12,490.06,5880.72,2484.03
+ORD-1100,2024-05-26,Asia Pacific,Startup,Developer Tools,DebugPro X,5,496.83,2484.15,570.16
+ORD-1101,2024-05-28,Asia Pacific,Startup,Developer Tools,CodePiper CI,2,124.8,249.6,71.57
+ORD-1102,2024-05-29,North America,Startup,Enterprise Software,ERP Suite Pro,6,312.94,1877.64,1052.35
+ORD-1103,2024-05-30,North America,Government,Developer Tools,DebugPro X,8,227.53,1820.24,441.78
+ORD-1104,2024-06-01,Latin America,Enterprise,Cloud Storage,S3 Glacier Sync,8,209.01,1672.08,724.78
+ORD-1105,2024-06-02,North America,Government,Enterprise Software,HR Core,6,64.54,387.24,120.78
+ORD-1106,2024-06-04,Europe,Startup,Enterprise Software,ERP Suite Pro,13,459.92,5978.96,3162.96
+ORD-1107,2024-06-05,Europe,Startup,Developer Tools,CodePiper CI,9,238.21,2143.89,1228.64
+ORD-1108,2024-06-07,Europe,Government,Enterprise Software,ERP Suite Pro,7,235.06,1645.42,840.88
+ORD-1109,2024-06-08,Europe,Startup,AI Solutions,NeuralBot API,11,317.36,3490.96,1230.06
+ORD-1110,2024-06-10,Asia Pacific,Enterprise,AI Solutions,NeuralBot API,13,78.58,1021.54,219.35
+ORD-1111,2024-06-11,North America,Mid-Market,Enterprise Software,HR Core,6,361.27,2167.62,896.83
+ORD-1112,2024-06-13,Europe,Startup,AI Solutions,NeuralBot API,7,396.04,2772.28,1602.12
+ORD-1113,2024-06-14,North America,Enterprise,Enterprise Software,ERP Suite Pro,14,142.27,1991.78,598.68
+ORD-1114,2024-06-16,Latin America,Startup,Developer Tools,DebugPro X,1,352.27,352.27,157.55
+ORD-1115,2024-06-17,Asia Pacific,Startup,Developer Tools,ContainerStack,10,274.17,2741.7,1070.59
+ORD-1116,2024-06-19,Asia Pacific,Enterprise,Cloud Storage,CloudDrive Business,6,485.59,2913.54,685.74
+ORD-1117,2024-06-20,Europe,Startup,Enterprise Software,HR Core,7,389.81,2728.67,1222.78
+ORD-1118,2024-06-21,Europe,Mid-Market,AI Solutions,Copilot Studio,6,327.77,1966.62,1164.6
+ORD-1119,2024-06-23,North America,Mid-Market,Cloud Storage,S3 Glacier Sync,11,90.95,1000.45,490.78
+ORD-1120,2024-06-24,North America,Enterprise,Enterprise Software,HR Core,12,184.08,2208.96,904.44
+ORD-1121,2024-06-26,Latin America,Government,Enterprise Software,CRM Enterprise,8,428.94,3431.52,1741.73
+ORD-1122,2024-06-27,Asia Pacific,Startup,Enterprise Software,CRM Enterprise,6,271.68,1630.08,540.37
+ORD-1123,2024-06-29,Latin America,Startup,Developer Tools,ContainerStack,3,291.77,875.31,336.16
+ORD-1124,2024-06-30,North America,Startup,AI Solutions,AutoVision Suite,8,131.03,1048.24,501.69
+ORD-1125,2024-07-02,Europe,Startup,Developer Tools,ContainerStack,11,350.4,3854.4,1036.56
+ORD-1126,2024-07-03,Europe,Enterprise,AI Solutions,NeuralBot API,5,205.29,1026.45,348.02
+ORD-1127,2024-07-05,Europe,Enterprise,Cloud Storage,CloudDrive Business,5,257.35,1286.75,363.55
+ORD-1128,2024-07-06,Asia Pacific,Enterprise,Cloud Storage,S3 Glacier Sync,13,194.71,2531.23,599.69
+ORD-1129,2024-07-08,North America,Enterprise,Cloud Storage,Cold Vault,8,443.11,3544.88,2014.73
+ORD-1130,2024-07-09,Asia Pacific,Startup,Cloud Storage,CloudDrive Business,8,386.72,3093.76,847.1
+ORD-1131,2024-07-11,Latin America,Mid-Market,AI Solutions,AutoVision Suite,14,328.21,4594.94,1597.04
+ORD-1132,2024-07-12,Asia Pacific,Startup,Enterprise Software,CRM Enterprise,14,116.48,1630.72,412.97
+ORD-1133,2024-07-13,Europe,Mid-Market,AI Solutions,AutoVision Suite,11,289.45,3183.95,773.28
+ORD-1134,2024-07-15,Asia Pacific,Enterprise,AI Solutions,Copilot Studio,9,381.83,3436.47,937.86
+ORD-1135,2024-07-16,North America,Enterprise,Enterprise Software,HR Core,6,197.37,1184.22,293.57
+ORD-1136,2024-07-18,Europe,Startup,Developer Tools,CodePiper CI,4,209.8,839.2,385.64
+ORD-1137,2024-07-19,North America,Government,Developer Tools,ContainerStack,6,314.08,1884.48,938.8
+ORD-1138,2024-07-21,Latin America,Mid-Market,AI Solutions,AutoVision Suite,9,201.85,1816.65,1017.07
+ORD-1139,2024-07-22,North America,Mid-Market,AI Solutions,Copilot Studio,13,198.66,2582.58,1481.05
+ORD-1140,2024-07-24,Asia Pacific,Mid-Market,Enterprise Software,CRM Enterprise,6,160.68,964.08,254.78
+ORD-1141,2024-07-25,Asia Pacific,Startup,Cloud Storage,S3 Glacier Sync,8,453.54,3628.32,842.11
+ORD-1142,2024-07-27,Latin America,Government,Developer Tools,CodePiper CI,4,498.76,1995.04,1114.52
+ORD-1143,2024-07-28,Europe,Startup,AI Solutions,Copilot Studio,6,488.78,2932.68,1162.22
+ORD-1144,2024-07-30,Asia Pacific,Enterprise,Cloud Storage,CloudDrive Business,2,300.54,601.08,257.65
+ORD-1145,2024-07-31,Latin America,Enterprise,Developer Tools,CodePiper CI,6,485.6,2913.6,1411.29
+ORD-1146,2024-08-02,Latin America,Mid-Market,Developer Tools,CodePiper CI,12,101.68,1220.16,542.05
+ORD-1147,2024-08-03,Asia Pacific,Enterprise,Enterprise Software,CRM Enterprise,11,469.41,5163.51,1694.96
+ORD-1148,2024-08-04,Latin America,Mid-Market,Cloud Storage,S3 Glacier Sync,8,110.49,883.92,199.19
+ORD-1149,2024-08-06,North America,Enterprise,Enterprise Software,CRM Enterprise,4,164.59,658.36,311.14
+ORD-1150,2024-08-07,Asia Pacific,Enterprise,AI Solutions,Copilot Studio,8,322.75,2582.0,1336.74
+ORD-1151,2024-08-09,Latin America,Startup,Enterprise Software,CRM Enterprise,12,484.26,5811.12,1451.15
+ORD-1152,2024-08-10,Latin America,Mid-Market,Enterprise Software,CRM Enterprise,12,220.65,2647.8,1510.78
+ORD-1153,2024-08-12,Latin America,Mid-Market,Developer Tools,CodePiper CI,8,422.57,3380.56,1690.96
+ORD-1154,2024-08-13,Europe,Mid-Market,AI Solutions,NeuralBot API,5,416.56,2082.8,970.75
+ORD-1155,2024-08-15,Latin America,Startup,Developer Tools,CodePiper CI,13,314.74,4091.62,1936.13
+ORD-1156,2024-08-16,Asia Pacific,Startup,Developer Tools,DebugPro X,3,330.85,992.55,412.81
+ORD-1157,2024-08-18,Europe,Enterprise,Enterprise Software,ERP Suite Pro,1,454.81,454.81,160.8
+ORD-1158,2024-08-19,Asia Pacific,Startup,Developer Tools,ContainerStack,7,102.6,718.2,413.63
+ORD-1159,2024-08-21,Latin America,Mid-Market,Developer Tools,DebugPro X,4,407.31,1629.24,729.95
+ORD-1160,2024-08-22,North America,Enterprise,AI Solutions,Copilot Studio,4,498.96,1995.84,999.84
+ORD-1161,2024-08-24,Europe,Enterprise,AI Solutions,Copilot Studio,1,65.09,65.09,27.86
+ORD-1162,2024-08-25,Asia Pacific,Government,AI Solutions,AutoVision Suite,1,96.31,96.31,39.93
+ORD-1163,2024-08-26,Latin America,Government,Enterprise Software,HR Core,13,292.94,3808.22,1502.51
+ORD-1164,2024-08-28,Latin America,Mid-Market,Enterprise Software,CRM Enterprise,11,338.52,3723.72,1778.37
+ORD-1165,2024-08-29,Latin America,Mid-Market,AI Solutions,Copilot Studio,5,422.06,2110.3,1231.63
+ORD-1166,2024-08-31,North America,Government,Cloud Storage,Cold Vault,10,476.28,4762.8,1244.71
+ORD-1167,2024-09-01,Asia Pacific,Government,Cloud Storage,S3 Glacier Sync,9,165.21,1486.89,729.23
+ORD-1168,2024-09-03,North America,Government,Developer Tools,CodePiper CI,8,60.36,482.88,222.39
+ORD-1169,2024-09-04,Latin America,Enterprise,AI Solutions,AutoVision Suite,9,240.86,2167.74,1072.12
+ORD-1170,2024-09-06,Europe,Mid-Market,Cloud Storage,Cold Vault,7,105.26,736.82,216.89
+ORD-1171,2024-09-07,Asia Pacific,Startup,Developer Tools,DebugPro X,7,464.38,3250.66,1781.23
+ORD-1172,2024-09-09,Europe,Government,Developer Tools,ContainerStack,5,220.69,1103.45,549.19
+ORD-1173,2024-09-10,North America,Mid-Market,Enterprise Software,ERP Suite Pro,10,200.07,2000.7,718.79
+ORD-1174,2024-09-12,Asia Pacific,Enterprise,AI Solutions,AutoVision Suite,2,259.57,519.14,203.68
+ORD-1175,2024-09-13,Latin America,Enterprise,Developer Tools,ContainerStack,11,253.6,2789.6,715.09
+ORD-1176,2024-09-14,Asia Pacific,Startup,AI Solutions,AutoVision Suite,5,461.68,2308.4,796.3
+ORD-1177,2024-09-16,North America,Government,Cloud Storage,S3 Glacier Sync,12,145.71,1748.52,710.02
+ORD-1178,2024-09-17,North America,Government,Enterprise Software,ERP Suite Pro,4,236.58,946.32,221.57
+ORD-1179,2024-09-19,Asia Pacific,Startup,Enterprise Software,HR Core,1,189.47,189.47,68.01
+ORD-1180,2024-09-20,North America,Enterprise,Developer Tools,ContainerStack,14,142.31,1992.34,550.43
+ORD-1181,2024-09-22,Europe,Mid-Market,Cloud Storage,Cold Vault,2,182.32,364.64,177.08
+ORD-1182,2024-09-23,Latin America,Enterprise,Cloud Storage,CloudDrive Business,2,273.66,547.32,277.02
+ORD-1183,2024-09-25,Europe,Startup,Developer Tools,CodePiper CI,7,475.75,3330.25,1163.34
+ORD-1184,2024-09-26,Latin America,Mid-Market,Cloud Storage,S3 Glacier Sync,12,410.34,4924.08,2912.95
+ORD-1185,2024-09-28,Latin America,Startup,AI Solutions,NeuralBot API,8,62.19,497.52,143.68
+ORD-1186,2024-09-29,North America,Startup,AI Solutions,Copilot Studio,13,317.77,4131.01,1386.82
+ORD-1187,2024-10-01,Latin America,Government,AI Solutions,NeuralBot API,12,157.18,1886.16,452.26
+ORD-1188,2024-10-02,Europe,Enterprise,Cloud Storage,S3 Glacier Sync,11,483.19,5315.09,3070.87
+ORD-1189,2024-10-04,Asia Pacific,Enterprise,Cloud Storage,Cold Vault,7,453.35,3173.45,651.19
+ORD-1190,2024-10-05,North America,Government,AI Solutions,NeuralBot API,3,105.25,315.75,173.84
+ORD-1191,2024-10-06,Europe,Startup,Cloud Storage,S3 Glacier Sync,1,417.85,417.85,140.7
+ORD-1192,2024-10-08,North America,Mid-Market,Cloud Storage,Cold Vault,7,65.4,457.8,243.67
+ORD-1193,2024-10-09,Latin America,Mid-Market,Developer Tools,DebugPro X,9,246.26,2216.34,704.32
+ORD-1194,2024-10-11,Asia Pacific,Government,Cloud Storage,CloudDrive Business,10,304.6,3046.0,1809.77
+ORD-1195,2024-10-12,Latin America,Mid-Market,Developer Tools,CodePiper CI,2,60.11,120.22,36.96
+ORD-1196,2024-10-14,Europe,Government,Enterprise Software,ERP Suite Pro,7,148.11,1036.77,474.86
+ORD-1197,2024-10-15,Asia Pacific,Mid-Market,Cloud Storage,S3 Glacier Sync,13,127.26,1654.38,511.08
+ORD-1198,2024-10-17,North America,Enterprise,Cloud Storage,CloudDrive Business,10,309.43,3094.3,958.06
+ORD-1199,2024-10-18,Europe,Enterprise,Enterprise Software,CRM Enterprise,10,374.09,3740.9,907.66
+ORD-1200,2024-10-20,North America,Enterprise,AI Solutions,NeuralBot API,6,379.48,2276.88,683.73
+ORD-1201,2024-10-21,Latin America,Mid-Market,Enterprise Software,HR Core,10,461.49,4614.9,1696.01
+ORD-1202,2024-10-23,Asia Pacific,Enterprise,Cloud Storage,S3 Glacier Sync,2,124.83,249.66,123.63
+ORD-1203,2024-10-24,Asia Pacific,Government,Developer Tools,ContainerStack,10,80.71,807.1,431.66
+ORD-1204,2024-10-26,Europe,Startup,Developer Tools,CodePiper CI,11,183.7,2020.7,861.95
+ORD-1205,2024-10-27,Latin America,Startup,AI Solutions,AutoVision Suite,6,379.66,2277.96,651.44
+ORD-1206,2024-10-28,Asia Pacific,Enterprise,Developer Tools,ContainerStack,3,428.69,1286.07,692.63
+ORD-1207,2024-10-30,North America,Government,AI Solutions,AutoVision Suite,9,396.91,3572.19,866.75
+ORD-1208,2024-10-31,North America,Startup,Enterprise Software,ERP Suite Pro,9,367.22,3304.98,1451.93
+ORD-1209,2024-11-02,Europe,Mid-Market,AI Solutions,Copilot Studio,2,409.74,819.48,391.61
+ORD-1210,2024-11-03,North America,Enterprise,Cloud Storage,Cold Vault,5,91.21,456.05,258.55
+ORD-1211,2024-11-05,Latin America,Government,Cloud Storage,CloudDrive Business,7,284.59,1992.13,467.52
+ORD-1212,2024-11-06,Latin America,Mid-Market,AI Solutions,Copilot Studio,5,391.57,1957.85,958.64
+ORD-1213,2024-11-08,Europe,Enterprise,Developer Tools,CodePiper CI,2,270.24,540.48,155.92
+ORD-1214,2024-11-09,Europe,Enterprise,Enterprise Software,CRM Enterprise,10,314.72,3147.2,1887.51
+ORD-1215,2024-11-11,North America,Startup,Cloud Storage,S3 Glacier Sync,7,65.28,456.96,218.87
+ORD-1216,2024-11-12,Europe,Government,Developer Tools,DebugPro X,11,474.92,5224.12,2035.76
+ORD-1217,2024-11-14,Europe,Startup,AI Solutions,Copilot Studio,2,285.1,570.2,261.05
+ORD-1218,2024-11-15,North America,Startup,Developer Tools,ContainerStack,12,104.26,1251.12,288.74
+ORD-1219,2024-11-17,Latin America,Enterprise,Developer Tools,DebugPro X,7,232.02,1624.14,696.71
+ORD-1220,2024-11-18,Latin America,Enterprise,Developer Tools,CodePiper CI,6,193.44,1160.64,522.7
+ORD-1221,2024-11-19,Europe,Startup,Cloud Storage,S3 Glacier Sync,2,60.98,121.96,66.84
+ORD-1222,2024-11-21,Asia Pacific,Startup,AI Solutions,NeuralBot API,13,222.78,2896.14,1659.59
+ORD-1223,2024-11-22,Latin America,Enterprise,Cloud Storage,CloudDrive Business,14,89.84,1257.76,270.47
+ORD-1224,2024-11-24,Asia Pacific,Government,Developer Tools,ContainerStack,9,395.72,3561.48,1307.44
+ORD-1225,2024-11-25,Latin America,Mid-Market,Enterprise Software,ERP Suite Pro,14,51.51,721.14,279.03
+ORD-1226,2024-11-27,North America,Mid-Market,Cloud Storage,S3 Glacier Sync,14,315.1,4411.4,1371.53
+ORD-1227,2024-11-28,Asia Pacific,Mid-Market,AI Solutions,NeuralBot API,1,226.23,226.23,56.51
+ORD-1228,2024-11-30,Latin America,Startup,Enterprise Software,ERP Suite Pro,5,90.23,451.15,165.59
+ORD-1229,2024-12-01,Latin America,Government,Cloud Storage,Cold Vault,14,326.04,4564.56,1217.89
+ORD-1230,2024-12-03,Europe,Startup,AI Solutions,NeuralBot API,6,323.48,1940.88,786.2
+ORD-1231,2024-12-04,Latin America,Mid-Market,Cloud Storage,CloudDrive Business,10,66.53,665.3,387.81
+ORD-1232,2024-12-06,Asia Pacific,Government,Enterprise Software,ERP Suite Pro,6,486.1,2916.6,1614.38
+ORD-1233,2024-12-07,Europe,Mid-Market,Cloud Storage,CloudDrive Business,13,167.11,2172.43,882.22
+ORD-1234,2024-12-09,Asia Pacific,Enterprise,Enterprise Software,HR Core,3,151.0,453.0,131.16
+ORD-1235,2024-12-10,Asia Pacific,Startup,Enterprise Software,CRM Enterprise,5,91.17,455.85,251.17
+ORD-1236,2024-12-11,Europe,Enterprise,Developer Tools,CodePiper CI,9,69.97,629.73,340.61
+ORD-1237,2024-12-13,Latin America,Startup,AI Solutions,NeuralBot API,5,380.85,1904.25,595.19
+ORD-1238,2024-12-14,North America,Government,Cloud Storage,Cold Vault,5,71.95,359.75,148.59
+ORD-1239,2024-12-16,Latin America,Enterprise,Developer Tools,CodePiper CI,12,84.26,1011.12,546.49
+ORD-1240,2024-12-17,Latin America,Mid-Market,Developer Tools,DebugPro X,13,457.93,5953.09,2551.06
+ORD-1241,2024-12-19,Asia Pacific,Government,Developer Tools,ContainerStack,13,170.16,2212.08,1219.86
+ORD-1242,2024-12-20,Asia Pacific,Enterprise,Developer Tools,CodePiper CI,11,440.28,4843.08,2340.88
+ORD-1243,2024-12-22,Latin America,Startup,Enterprise Software,ERP Suite Pro,10,97.63,976.3,468.23
+ORD-1244,2024-12-23,Asia Pacific,Mid-Market,Enterprise Software,HR Core,13,442.33,5750.29,1217.33
+ORD-1245,2024-12-25,Latin America,Mid-Market,Cloud Storage,Cold Vault,5,384.58,1922.9,508.23
+ORD-1246,2024-12-26,North America,Mid-Market,Cloud Storage,CloudDrive Business,13,166.41,2163.33,599.79
+ORD-1247,2024-12-28,Latin America,Government,AI Solutions,NeuralBot API,9,334.32,3008.88,914.46
+ORD-1248,2024-12-29,Asia Pacific,Mid-Market,Developer Tools,CodePiper CI,3,107.8,323.4,101.33
+ORD-1249,2024-12-31,North America,Mid-Market,Enterprise Software,CRM Enterprise,12,334.68,4016.16,2300.5
