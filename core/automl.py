@@ -326,3 +326,53 @@ def run_automl_tournament(
         classes_=classes_list,
         summary=summary,
     )
+
+
+
+@dataclass
+class SinglePredictionResult:
+    prediction: Union[str, float, int]
+    probabilities: Optional[Dict[str, float]] = None
+    confidence: Optional[float] = None
+    task_type: TaskType = TaskType.CLASSIFICATION
+
+
+def predict_single(
+    pipeline: Pipeline,
+    input_values: Dict[str, Any],
+    feature_columns: List[str],
+    task_type: TaskType,
+    classes: Optional[List[str]] = None
+) -> SinglePredictionResult:
+    """
+    Runs live inference for a single row given as a feature dict.
+    Returns predicted label or numeric estimate, alongside probabilities if classification.
+    """
+    row_data = {col: [input_values.get(col, np.nan)] for col in feature_columns}
+    row_df = pd.DataFrame(row_data)
+
+    pred = pipeline.predict(row_df)[0]
+
+    prob_dict = None
+    confidence = None
+
+    if task_type == TaskType.CLASSIFICATION and hasattr(pipeline, "predict_proba"):
+        try:
+            probs = pipeline.predict_proba(row_df)[0]
+            model_classes = classes or [str(i) for i in range(len(probs))]
+            prob_dict = {str(c): round(float(p), 4) for c, p in zip(model_classes, probs)}
+            confidence = round(float(np.max(probs)), 4)
+        except Exception:
+            prob_dict = None
+
+    if task_type == TaskType.REGRESSION:
+        pred_val = round(float(pred), 4)
+    else:
+        pred_val = str(pred)
+
+    return SinglePredictionResult(
+        prediction=pred_val,
+        probabilities=prob_dict,
+        confidence=confidence,
+        task_type=task_type,
+    )
