@@ -264,3 +264,94 @@ def apply_drop_column(df: pd.DataFrame, col: str) -> Tuple[pd.DataFrame, Transfo
         description=f"Dropped column '{col}' from dataset",
     )
     return df_out, action
+
+
+
+class DatasetVersionManager:
+    """
+    Maintains an immutable time-travel history of dataset states.
+    Supports linear and branching undo, redo, snapshot rollbacks, and audit logging.
+    """
+    def __init__(self, initial_df: pd.DataFrame, initial_name: str = "Raw Ingested Dataset"):
+        initial_snap = DatasetSnapshot(
+            version_id=0,
+            name=initial_name,
+            df=initial_df.copy(),
+            action_applied=None,
+        )
+        self.history: List[DatasetSnapshot] = [initial_snap]
+        self.current_index: int = 0
+
+    @property
+    def current_snapshot(self) -> DatasetSnapshot:
+        return self.history[self.current_index]
+
+    @property
+    def current_df(self) -> pd.DataFrame:
+        return self.current_snapshot.df
+
+    @property
+    def can_undo(self) -> bool:
+        return self.current_index > 0
+
+    @property
+    def can_redo(self) -> bool:
+        return self.current_index < len(self.history) - 1
+
+    def commit_transform(
+        self,
+        new_df: pd.DataFrame,
+        action: TransformAction,
+        name: Optional[str] = None
+    ) -> DatasetSnapshot:
+        """Applies a transformation and commits a new immutable snapshot to history."""
+        # Truncate any forward redo history on new action
+        self.history = self.history[:self.current_index + 1]
+
+        new_version_id = len(self.history)
+        snap_name = name or action.description or f"Snapshot v{new_version_id}"
+        new_snap = DatasetSnapshot(
+            version_id=new_version_id,
+            name=snap_name,
+            df=new_df.copy(),
+            action_applied=action,
+        )
+        self.history.append(new_snap)
+        self.current_index = len(self.history) - 1
+        return new_snap
+
+    def undo(self) -> Optional[DatasetSnapshot]:
+        """Steps back to the previous dataset state."""
+        if self.can_undo:
+            self.current_index -= 1
+            return self.current_snapshot
+        return None
+
+    def redo(self) -> Optional[DatasetSnapshot]:
+        """Steps forward to the previously undone dataset state."""
+        if self.can_redo:
+            self.current_index += 1
+            return self.current_snapshot
+        return None
+
+    def jump_to(self, version_id: int) -> Optional[DatasetSnapshot]:
+        """Jumps directly to any snapshot in the version history."""
+        if 0 <= version_id < len(self.history):
+            self.current_index = version_id
+            return self.current_snapshot
+        return None
+
+    def get_audit_log(self) -> List[Dict[str, Any]]:
+        """Returns structured chronological list of all transformations."""
+        logs = []
+        for snap in self.history:
+            logs.append({
+                "version": snap.version_id,
+                "name": snap.name,
+                "timestamp": snap.created_at,
+                "rows": snap.row_count,
+                "columns": snap.column_count,
+                "is_current": snap.version_id == self.current_snapshot.version_id,
+                "action": snap.action_applied.description if snap.action_applied else "Baseline Ingestion",
+            })
+        return logs
