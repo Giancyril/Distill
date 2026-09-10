@@ -109,3 +109,77 @@ def extract_report_data(
         key_findings=findings,
         recommendations=recommendations,
     )
+
+
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+
+
+def _get_distill_styles() -> Dict[str, ParagraphStyle]:
+    """Defines ReportLab typography styles matching the Distill design system."""
+    base_styles = getSampleStyleSheet()
+    styles = {}
+
+    styles["Title"] = ParagraphStyle(
+        "DistillTitle",
+        parent=base_styles["Normal"],
+        fontName="Helvetica-Bold",
+        fontSize=20,
+        leading=24,
+        textColor=colors.HexColor("#0F172A"),
+        spaceAfter=4,
+    )
+    styles["Subheader"] = ParagraphStyle(
+        "DistillSubheader",
+        parent=base_styles["Normal"],
+        fontName="Helvetica",
+        fontSize=9,
+        leading=12,
+        textColor=colors.HexColor("#64748B"),
+        spaceAfter=12,
+    )
+    styles["Heading2"] = ParagraphStyle(
+        "DistillH2",
+        parent=base_styles["Heading2"],
+        fontName="Helvetica-Bold",
+        fontSize=13,
+        leading=16,
+        textColor=colors.HexColor("#1E293B"),
+        spaceBefore=12,
+        spaceAfter=6,
+    )
+    styles["Body"] = ParagraphStyle(
+        "DistillBody",
+        parent=base_styles["Normal"],
+        fontName="Helvetica",
+        fontSize=9,
+        leading=13,
+        textColor=colors.HexColor("#334155"),
+        spaceAfter=4,
+    )
+    styles["Bullet"] = ParagraphStyle(
+        "DistillBullet",
+        parent=styles["Body"],
+        leftIndent=12,
+        bulletIndent=4,
+        spaceAfter=4,
+    )
+    styles["TableHead"] = ParagraphStyle(
+        "DistillTableHead",
+        parent=base_styles["Normal"],
+        fontName="Helvetica-Bold",
+        fontSize=8,
+        leading=10,
+        textColor=colors.HexColor("#475569"),
+    )
+    styles["TableCell"] = ParagraphStyle(
+        "DistillTableCell",
+        parent=base_styles["Normal"],
+        fontName="Helvetica",
+        fontSize=8,
+        leading=10,
+        textColor=colors.HexColor("#1E293B"),
+    )
+    return styles
