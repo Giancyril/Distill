@@ -1,8 +1,6 @@
 """
-app/main.py — Threadline Data Lab: Autonomous Tabular Intelligence Dashboard.
-State-of-the-art UI inspired by Threadline design system:
-Crisp white aesthetic, Plus Jakarta Sans typography, AST Sandboxed execution,
-and conversational natural language query workspace.
+app/main.py \u2013 Threadline Data Lab: Autonomous Tabular Intelligence Dashboard.
+Refined UI: Pass 2 \u2014 depth, iconography, typography system.
 """
 from __future__ import annotations
 
@@ -31,8 +29,8 @@ from core.query_engine import run_query
 from core.sandbox import execute_in_sandbox
 
 st.set_page_config(
-    page_title="Threadline Data Lab — AI Data Analysis",
-    page_icon="⚡",
+    page_title="Threadline Data Lab",
+    page_icon="\u26a1",
     layout="wide",
     initial_sidebar_state="expanded",
     menu_items={
@@ -40,337 +38,334 @@ st.set_page_config(
         "About": "# Threadline Data Lab\nAutonomous AI-augmented data analytics & sandboxed execution.",
     },
 )
+
+# ---------------------------------------------------------------------------
+# SVG ICON REGISTRY  (Lucide-style, stroke-width 2, all 18px unless noted)
+# ---------------------------------------------------------------------------
+def _svg(path_d: str, size: int = 18, color: str = "currentColor", extra_attrs: str = "") -> str:
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" '
+        f'viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="2" '
+        f'stroke-linecap="round" stroke-linejoin="round" '
+        f'style="display:inline-block;vertical-align:middle;flex-shrink:0;" {extra_attrs}>'
+        f'{path_d}</svg>'
+    )
+
+ICONS: dict = {
+    "zap": _svg('<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>', 16, "#FFFFFF"),
+    "zap_indigo": _svg('<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>', 14, "#4F46E5"),
+    "trending_up": _svg(
+        '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>'
+        '<polyline points="17 6 23 6 23 12"/>',
+        18, "#4F46E5"
+    ),
+    "users": _svg(
+        '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>'
+        '<circle cx="9" cy="7" r="4"/>'
+        '<path d="M23 21v-2a4 4 0 0 0-3-3.87"/>'
+        '<path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+        18, "#0891B2"
+    ),
+    "upload_cloud": _svg(
+        '<polyline points="16 16 12 12 8 16"/>'
+        '<line x1="12" y1="12" x2="12" y2="21"/>'
+        '<path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>',
+        32, "#6366F1"
+    ),
+    "bar_chart_2": _svg(
+        '<line x1="18" y1="20" x2="18" y2="10"/>'
+        '<line x1="12" y1="20" x2="12" y2="4"/>'
+        '<line x1="6" y1="20" x2="6" y2="14"/>',
+        14, "#4F46E5"
+    ),
+    "folder": _svg('<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>', 13, "#4F46E5"),
+    "columns": _svg('<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="3" x2="12" y2="21"/>', 13, "#7C3AED"),
+    "alert_triangle": _svg('<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>', 13, "#D97706"),
+    "copy": _svg('<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>', 13, "#E11D48"),
+    "star": _svg('<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>', 13, "#059669"),
+    "message_square": _svg('<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>', 14, "#64748B"),
+    "shield": _svg('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>', 14, "#64748B"),
+    "table": _svg('<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/>', 14, "#64748B"),
+    "check": _svg('<polyline points="20 6 9 17 4 12"/>', 14, "#059669"),
+    "code_2": _svg('<path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/>', 13, "#4338CA"),
+    "sparkles": _svg('<path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/>', 13, "#4338CA"),
+    "download": _svg('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>', 13, "#475569"),
+}
+
+
 THREADLINE_CSS = """
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
+/* === Base Typography \u2014 Explicit Inter === */
 html, body, [class*="css"], .stApp {
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
     background-color: #F8FAFC !important;
     color: #0F172A !important;
+    font-size: 13px !important;
+    line-height: 1.5 !important;
 }
-
 code, pre, .font-mono {
     font-family: 'JetBrains Mono', monospace !important;
+    font-size: 12px !important;
 }
-
 .main .block-container {
-    padding-top: 1rem !important;
-    padding-bottom: 3rem !important;
-    max-width: 1440px !important;
+    padding-top: 0.75rem !important;
+    padding-bottom: 2.5rem !important;
+    max-width: 1400px !important;
 }
 
+/* === Header \u2014 lifted elevation === */
 .threadline-header {
-    background: #FFFFFF;
+    background: #FAFAFF;
     border: 1px solid #E2E8F0;
-    border-radius: 1rem;
-    padding: 0.875rem 1.5rem;
-    margin-bottom: 1.25rem;
+    border-radius: 12px;
+    padding: 12px 20px;
+    margin-bottom: 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.04);
 }
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 0.875rem;
-}
+.header-left { display: flex; align-items: center; gap: 12px; }
 .brand-icon-box {
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 0.75rem;
-    background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #FFFFFF;
-    font-size: 1.25rem;
-    font-weight: 800;
-    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
+    width: 32px; height: 32px; border-radius: 8px; background: #4F46E5;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    box-shadow: 0 1px 2px rgba(79,70,229,0.25);
 }
 .brand-title {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: #0F172A;
-    letter-spacing: -0.02em;
-    margin: 0;
-    line-height: 1.2;
+    font-size: 26px; font-weight: 700; color: #0F172A;
+    letter-spacing: -0.02em; margin: 0; line-height: 1.2;
+    font-family: 'Inter', sans-serif;
 }
+/* 500-weight subtitle \u2014 bridges title and body weight */
 .brand-subtitle {
-    font-size: 0.75rem;
-    color: #64748B;
-    font-weight: 500;
-    margin: 0;
+    font-size: 13px; color: #64748B; font-weight: 500; margin: 0;
+    font-family: 'Inter', sans-serif;
 }
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-.status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: #F8FAFC;
-    border: 1px solid #E2E8F0;
-    border-radius: 9999px;
-    padding: 0.35rem 0.875rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #334155;
-}
-.pulse-dot {
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 9999px;
-    background: #10B981;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
-}
+.header-right { display: flex; align-items: center; gap: 8px; }
 
+/* === Status pills \u2014 tinted per state === */
+.status-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid transparent; border-radius: 9999px;
+    padding: 4px 12px; font-size: 12px; font-weight: 500;
+    height: 28px; white-space: nowrap;
+}
+.status-pill-neutral { background: #F4F4F6; border-color: #E4E4E7; color: #52525B; }
+.status-pill-amber   { background: #FFF8EB; border-color: #FDE68A; color: #92400E; }
+.status-pill-active  {
+    background: #FFFFFF; border-color: #E2E8F0; color: #334155;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+.status-dot { width: 7px; height: 7px; border-radius: 9999px; flex-shrink: 0; }
+.dot-emerald { background: #10B981; box-shadow: 0 0 0 2px rgba(16,185,129,0.2); }
+.dot-slate   { background: #94A3B8; }
+.dot-indigo  { background: #4F46E5; }
+.dot-amber   { background: #F59E0B; box-shadow: 0 0 0 2px rgba(245,158,11,0.2); }
+
+/* === Sidebar === */
 [data-testid="stSidebar"] {
     background-color: #FFFFFF !important;
     border-right: 1px solid #E2E8F0 !important;
 }
 [data-testid="stSidebar"] .block-container {
-    padding-top: 1.5rem !important;
-    padding-left: 1.25rem !important;
-    padding-right: 1.25rem !important;
+    padding-top: 16px !important; padding-left: 16px !important; padding-right: 16px !important;
 }
+/* Sidebar profile card \u2014 resting shadow so it lifts off bg */
 .sidebar-brand-card {
-    background: #FFFFFF;
-    border: 1px solid #F1F5F9;
-    border-radius: 0.875rem;
-    padding: 1rem;
-    margin-bottom: 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px;
+    padding: 12px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 2px 8px rgba(0,0,0,0.04);
 }
 .sidebar-section-title {
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #94A3B8;
-    margin-top: 1.25rem;
-    margin-bottom: 0.5rem;
-}
-.kpi-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-.kpi-card-threadline {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 1rem;
-    padding: 1.25rem;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-    position: relative;
-    overflow: hidden;
-}
-.kpi-card-threadline:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px -2px rgba(15, 23, 42, 0.08);
-    border-color: #CBD5E1;
-}
-.kpi-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-}
-.kpi-icon-pill {
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 0.625rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-}
-.icon-indigo { background: #EEF2FF; color: #4F46E5; }
-.icon-emerald { background: #ECFDF5; color: #059669; }
-.icon-violet { background: #F5F3FF; color: #7C3AED; }
-.icon-amber { background: #FFFBEB; color: #D97706; }
-.icon-rose { background: #FFF1F2; color: #E11D48; }
-
-.kpi-badge {
-    font-size: 0.7rem;
-    font-weight: 700;
-    padding: 0.2rem 0.5rem;
-    border-radius: 9999px;
-}
-.badge-indigo { background: #EEF2FF; color: #4338CA; border: 1px solid #E0E7FF; }
-.badge-emerald { background: #ECFDF5; color: #047857; border: 1px solid #D1FAE5; }
-.badge-amber { background: #FFFBEB; color: #B45309; border: 1px solid #FDE68A; }
-.badge-rose { background: #FFF1F2; color: #BE123C; border: 1px solid #FECDD3; }
-.badge-slate { background: #F1F5F9; color: #475569; border: 1px solid #E2E8F0; }
-
-.kpi-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #64748B;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 0.25rem;
-}
-.kpi-val {
-    font-size: 1.75rem;
-    font-weight: 800;
-    color: #0F172A;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-}
-.kpi-subtext {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: #94A3B8;
-    margin-top: 0.25rem;
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.05em; color: #64748B; margin-top: 16px; margin-bottom: 8px;
 }
 
-.threadline-card {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 1rem;
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 1.25rem;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+/* === Buttons === */
+.stButton > button {
+    border-radius: 8px !important; font-size: 13px !important;
+    font-weight: 500 !important; padding: 8px 16px !important;
+    transition: all 0.15s ease-in-out !important;
+    font-family: 'Inter', sans-serif !important;
 }
-.threadline-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid #F1F5F9;
-}
-.card-header-title {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #0F172A;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.chat-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    margin-top: 1rem;
-}
-.chat-turn {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-.chat-user-bubble {
-    align-self: flex-end;
-    background: #4F46E5;
-    color: #FFFFFF;
-    padding: 0.875rem 1.25rem;
-    border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;
-    max-width: 80%;
-    font-size: 0.9rem;
-    font-weight: 500;
-    line-height: 1.5;
-    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
-}
-.chat-assistant-bubble {
-    align-self: flex-start;
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
-    padding: 1.25rem;
-    width: 100%;
-    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
-}
-.chat-meta-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.25rem 0.65rem;
-    border-radius: 9999px;
-    background: #EEF2FF;
-    border: 1px solid #E0E7FF;
-    color: #4338CA;
-    font-size: 0.72rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-}
-.chat-answer-text {
-    font-size: 0.92rem;
-    color: #1E293B;
-    line-height: 1.6;
-    margin-bottom: 1rem;
-}
-
-.code-box {
-    background: #0F172A;
-    border: 1px solid #1E293B;
-    border-radius: 0.75rem;
-    padding: 1rem;
-    color: #E2E8F0;
-    font-family: 'JetBrains Mono', monospace !important;
-    font-size: 0.8rem;
-    line-height: 1.6;
-    overflow-x: auto;
-}
-
-.stTabs [data-baseweb="tab-list"] {
-    gap: 0.35rem;
-    background: #F1F5F9 !important;
-    border: 1px solid #E2E8F0;
-    border-radius: 0.875rem !important;
-    padding: 0.3rem !important;
-    margin-bottom: 1.25rem !important;
-}
-.stTabs [data-baseweb="tab"] {
-    border-radius: 0.625rem !important;
-    padding: 0.5rem 1.25rem !important;
-    font-size: 0.825rem !important;
-    font-weight: 600 !important;
-    color: #64748B !important;
-    border: none !important;
-    transition: all 0.15s ease !important;
-}
-.stTabs [aria-selected="true"] {
-    background: #FFFFFF !important;
-    color: #4F46E5 !important;
-    font-weight: 700 !important;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08) !important;
-}
-
 .stButton > button[kind="primary"] {
-    background: #4F46E5 !important;
-    color: #FFFFFF !important;
-    border: none !important;
-    border-radius: 0.625rem !important;
-    font-weight: 600 !important;
-    box-shadow: 0 1px 3px rgba(79, 70, 229, 0.3) !important;
-    transition: background 0.15s ease !important;
+    background: #4F46E5 !important; color: #FFFFFF !important;
+    border: 1px solid #4F46E5 !important;
+    box-shadow: 0 1px 2px rgba(79,70,229,0.2) !important;
 }
 .stButton > button[kind="primary"]:hover {
-    background: #4338CA !important;
+    background: #4338CA !important; border-color: #4338CA !important;
+    box-shadow: 0 2px 4px rgba(79,70,229,0.25) !important;
 }
 .stButton > button[kind="secondary"] {
-    background: #FFFFFF !important;
-    border: 1px solid #CBD5E1 !important;
-    color: #334155 !important;
-    border-radius: 0.625rem !important;
-    font-weight: 600 !important;
+    background: #FFFFFF !important; border: 1px solid #E2E8F0 !important;
+    color: #334155 !important; box-shadow: 0 1px 2px rgba(0,0,0,0.03) !important;
 }
 .stButton > button[kind="secondary"]:hover {
-    background: #F8FAFC !important;
-    border-color: #94A3B8 !important;
-    color: #0F172A !important;
+    background: #F8FAFC !important; border-color: #CBD5E1 !important; color: #0F172A !important;
+}
+
+/* === File uploader \u2014 recessed (slot you drop INTO) === */
+[data-testid="stFileUploader"] { border-radius: 8px !important; }
+[data-testid="stFileUploader"] section {
+    border: 1px dashed #CBD5E1 !important; background: #F8FAFC !important;
+    border-radius: 8px !important; padding: 12px !important;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.06) !important;
+    transition: all 0.15s ease-in-out !important;
+}
+[data-testid="stFileUploader"] section:hover {
+    border-color: #4F46E5 !important; background: #FAFAFF !important;
+}
+
+/* === Content cards \u2014 real hover lift === */
+.threadline-card {
+    background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px;
+    padding: 16px 20px; margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04);
+    transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+.threadline-card:hover {
+    border-color: #CBD5E1;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04);
+    transform: translateY(-1px);
+}
+.card-header-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #F1F5F9;
+}
+/* Card title: explicitly 600 weight, 15px */
+.card-title-text {
+    font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: #0F172A;
+    display: flex; align-items: center; gap: 6px; font-family: 'Inter', sans-serif;
+}
+.card-overline {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.05em; color: #64748B;
+}
+
+/* === KPI Cards === */
+.kpi-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px; margin-bottom: 16px;
+}
+.kpi-card {
+    background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04);
+    transition: all 0.15s ease-in-out;
+}
+.kpi-card:hover {
+    border-color: #CBD5E1; box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+}
+.kpi-top-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.kpi-icon-pill { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+.icon-indigo  { background: #EEF2FF; }
+.icon-emerald { background: #ECFDF5; }
+.icon-violet  { background: #F5F3FF; }
+.icon-amber   { background: #FFFBEB; }
+.icon-rose    { background: #FFF1F2; }
+.icon-cyan    { background: #ECFEFF; }
+
+.badge-pill { font-size: 11px; font-weight: 600; letter-spacing: 0.03em; padding: 2px 8px; border-radius: 9999px; }
+.badge-indigo  { background: #EEF2FF; color: #4338CA; border: 1px solid #E0E7FF; }
+.badge-emerald { background: #ECFDF5; color: #047857; border: 1px solid #D1FAE5; }
+.badge-amber   { background: #FFFBEB; color: #B45309; border: 1px solid #FDE68A; }
+.badge-rose    { background: #FFF1F2; color: #BE123C; border: 1px solid #FECDD3; }
+.badge-slate   { background: #F1F5F9; color: #475569; border: 1px solid #E2E8F0; }
+.badge-cyan    { background: #ECFEFF; color: #0E7490; border: 1px solid #A5F3FC; }
+
+.kpi-label-text { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; margin-bottom: 4px; }
+.kpi-value-text { font-size: 24px; font-weight: 700; color: #0F172A; letter-spacing: -0.02em; line-height: 1.2; font-family: 'Inter', sans-serif; }
+.kpi-meta-text  { font-size: 12px; font-weight: 400; color: #94A3B8; margin-top: 4px; }
+
+/* === Empty state \u2014 recessed dropzone === */
+.empty-drop-zone {
+    border: 2px dashed #CBD5E1; background: #F8FAFC;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.04);
+    border-radius: 12px; padding: 40px 24px; text-align: center;
+    max-width: 640px; margin: 16px auto 0 auto;
+    transition: all 0.15s ease-in-out;
+}
+.empty-drop-zone:hover { border-color: #4F46E5; background: #FAFAFF; }
+.empty-upload-icon {
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px auto; width: 56px; height: 56px;
+    background: #EEF2FF; border-radius: 12px; border: 1px solid #E0E7FF;
+}
+.empty-title {
+    font-size: 18px; font-weight: 600; color: #0F172A; margin-bottom: 6px;
+    letter-spacing: -0.01em; font-family: 'Inter', sans-serif;
+}
+.empty-desc { font-size: 13px; color: #64748B; max-width: 420px; margin: 0 auto; line-height: 1.5; }
+.connecting-label-row {
+    display: flex; align-items: center; justify-content: center;
+    gap: 12px; margin: 16px auto; max-width: 640px;
+}
+.connecting-line { flex: 1; height: 1px; background: #E2E8F0; }
+.connecting-text { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #94A3B8; }
+
+/* === Sample cards \u2014 physically liftable === */
+.sample-card {
+    background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 2px 6px rgba(0,0,0,0.04);
+    height: 100%; display: flex; flex-direction: column; justify-content: space-between;
+    transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+}
+.sample-card:hover {
+    border-color: #CBD5E1; box-shadow: 0 8px 20px rgba(0,0,0,0.08); transform: translateY(-2px);
+}
+.sample-card-indigo { border-top: 3px solid #4F46E5; }
+.sample-card-cyan   { border-top: 3px solid #0891B2; }
+.sample-card-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+.sample-icon-indigo { background: #EEF2FF; border: 1px solid #E0E7FF; }
+.sample-icon-cyan   { background: #ECFEFF; border: 1px solid #A5F3FC; }
+.sample-card-title { font-size: 15px; font-weight: 600; color: #0F172A; margin-bottom: 4px; font-family: 'Inter', sans-serif; letter-spacing: -0.01em; }
+.sample-card-desc  { font-size: 13px; color: #64748B; line-height: 1.4; margin-bottom: 12px; }
+
+/* === Chat === */
+.chat-container { display: flex; flex-direction: column; gap: 16px; margin-top: 12px; }
+.chat-turn { display: flex; flex-direction: column; gap: 8px; }
+.chat-user-bubble {
+    align-self: flex-end; background: #4F46E5; color: #FFFFFF;
+    padding: 10px 16px; border-radius: 14px 14px 2px 14px;
+    max-width: 75%; font-size: 13px; font-weight: 500; line-height: 1.5;
+    box-shadow: 0 1px 2px rgba(79,70,229,0.2);
+}
+.chat-assistant-bubble {
+    align-self: flex-start; background: #FFFFFF; border: 1px solid #E2E8F0;
+    border-radius: 14px 14px 14px 2px; padding: 16px; width: 100%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04);
+}
+.chat-meta-pill {
+    display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px;
+    border-radius: 9999px; background: #EEF2FF; border: 1px solid #E0E7FF;
+    color: #4338CA; font-size: 11px; font-weight: 600; margin-bottom: 10px;
+}
+.chat-answer-text { font-size: 13px; color: #1E293B; line-height: 1.6; margin-bottom: 12px; }
+.code-box {
+    background: #0F172A; border: 1px solid #1E293B; border-radius: 8px; padding: 12px;
+    color: #E2E8F0; font-family: 'JetBrains Mono', monospace !important;
+    font-size: 12px; line-height: 1.6; overflow-x: auto;
+}
+
+/* === Tabs === */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 4px; background: #F1F5F9 !important; border: 1px solid #E2E8F0;
+    border-radius: 8px !important; padding: 3px !important; margin-bottom: 16px !important;
+}
+.stTabs [data-baseweb="tab"] {
+    border-radius: 6px !important; padding: 6px 14px !important;
+    font-size: 13px !important; font-weight: 500 !important;
+    color: #64748B !important; border: none !important;
+    transition: all 0.15s ease !important; font-family: 'Inter', sans-serif !important;
+}
+.stTabs [aria-selected="true"] {
+    background: #FFFFFF !important; color: #0F172A !important;
+    font-weight: 600 !important; box-shadow: 0 1px 2px rgba(0,0,0,0.06) !important;
 }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -380,6 +375,8 @@ code, pre, .font-mono {
 </style>
 """
 st.markdown(THREADLINE_CSS, unsafe_allow_html=True)
+
+
 def _init_session():
     defaults = {
         "dataset": None,
@@ -396,6 +393,7 @@ def _init_session():
             st.session_state[k] = v
 
 _init_session()
+
 
 def _load_data_source(source, name: Optional[str] = None):
     try:
@@ -417,47 +415,62 @@ def _load_data_source(source, name: Optional[str] = None):
     st.session_state.cleaned_df = None
     st.session_state.clean_log = []
 
+
 has_dataset = st.session_state.dataset is not None
 active_file = st.session_state.filename or "No dataset loaded"
 row_count_str = f"{len(st.session_state.dataset):,} records" if has_dataset else "Awaiting CSV/Excel"
 openai_ready = bool(os.getenv("OPENAI_API_KEY"))
 
+# Pill 1: system state
+if has_dataset:
+    p1_cls, p1_dot, p1_txt = "status-pill-active", "dot-emerald", "AST Sandbox Active"
+else:
+    p1_cls, p1_dot, p1_txt = "status-pill-neutral", "dot-slate", "System Idle"
+
+# Pill 2: dataset
+if has_dataset:
+    p2_cls, p2_dot = "status-pill-active", "dot-indigo"
+    p2_txt = f"{active_file} &bull; {row_count_str}"
+else:
+    p2_cls, p2_dot, p2_txt = "status-pill-neutral", "dot-slate", "No Dataset Loaded"
+
+# Pill 3: engine (amber = most worth noticing)
+if openai_ready:
+    p3_cls, p3_dot, p3_txt = "status-pill-active", "dot-emerald", "OpenAI GPT-4o Online"
+else:
+    p3_cls, p3_dot, p3_txt = "status-pill-amber", "dot-amber", "Offline Sandbox Fallback"
+
 header_html = f"""
 <div class="threadline-header">
     <div class="header-left">
-        <div class="brand-icon-box">⚡</div>
+        <div class="brand-icon-box">{ICONS['zap']}</div>
         <div>
             <h1 class="brand-title">Threadline <span style="color:#4F46E5;">Data Lab</span></h1>
-            <p class="brand-subtitle">Autonomous Tabular Analytics • AST Sandboxed Intelligence</p>
+            <p class="brand-subtitle">Autonomous Tabular Analytics &amp; AST Sandboxed Intelligence</p>
         </div>
     </div>
     <div class="header-right">
-        <div class="status-pill">
-            <span class="pulse-dot"></span>
-            <span>{'AST Sandbox Active' if has_dataset else 'System Idle'}</span>
+        <div class="status-pill {p1_cls}"><span class="status-dot {p1_dot}"></span><span>{p1_txt}</span></div>
+        <div class="status-pill {p2_cls}">
+            <span class="status-dot {p2_dot}"></span>
+            <span style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{p2_txt}</span>
         </div>
-        <div class="status-pill" style="background:#FFFFFF;">
-            <span style="color:#64748B; font-weight:500;">Active:</span>
-            <strong style="color:#0F172A;">{active_file}</strong>
-            <span style="color:#94A3B8;">({row_count_str})</span>
-        </div>
-        <div class="status-pill" style="{'background:#ECFDF5; color:#065F46; border-color:#D1FAE5;' if openai_ready else 'background:#F8FAFC; color:#64748B;'}">
-            <span>{'● OpenAI GPT-4o Online' if openai_ready else '○ Offline Sandbox Fallback'}</span>
-        </div>
+        <div class="status-pill {p3_cls}"><span class="status-dot {p3_dot}"></span><span>{p3_txt}</span></div>
     </div>
 </div>
 """
 st.markdown(header_html, unsafe_allow_html=True)
 
+
 with st.sidebar:
-    st.markdown("""
+    st.markdown(f"""
     <div class="sidebar-brand-card">
-        <div style="width:2rem; height:2rem; border-radius:0.5rem; background:#4F46E5; display:flex; align-items:center; justify-content:center; color:#fff; font-size:1rem; font-weight:bold;">
-            T
+        <div style="width:28px;height:28px;border-radius:6px;background:#4F46E5;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            {ICONS['zap']}
         </div>
         <div>
-            <div style="font-size:0.875rem; font-weight:700; color:#0F172A;">Threadline Data</div>
-            <div style="font-size:0.7rem; color:#64748B; font-weight:500;">Enterprise Edition v1.4</div>
+            <div style="font-size:13px;font-weight:600;color:#0F172A;line-height:1.2;font-family:'Inter',sans-serif;">Threadline Data</div>
+            <div style="font-size:11px;color:#64748B;font-weight:400;">Data Lab &bull; Enterprise Edition</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -470,19 +483,19 @@ with st.sidebar:
         help="Max 50MB file size safeguard",
     )
     if uploaded and st.session_state.filename != uploaded.name:
-        with st.spinner("Analyzing and profiling dataset..."):
+        with st.spinner("Analyzing dataset..."):
             _load_data_source(uploaded, uploaded.name)
         st.rerun()
 
     st.markdown('<div class="sidebar-section-title">Benchmark Samples</div>', unsafe_allow_html=True)
     b_col1, b_col2 = st.columns(2)
     with b_col1:
-        if st.button("📈 Retail Sales", use_container_width=True, key="btn_sample_sales"):
+        if st.button("Retail Sales", use_container_width=True, key="btn_sample_sales", type="secondary"):
             with st.spinner("Loading sales..."):
                 _load_data_source("sample_data/sales_clean.csv", "sales_clean.csv")
             st.rerun()
     with b_col2:
-        if st.button("👥 Churn Messy", use_container_width=True, key="btn_sample_churn"):
+        if st.button("Churn Messy", use_container_width=True, key="btn_sample_churn", type="secondary"):
             with st.spinner("Loading churn..."):
                 _load_data_source("sample_data/customer_churn_messy.csv", "customer_churn_messy.csv")
             st.rerun()
@@ -496,93 +509,101 @@ with st.sidebar:
         quality_text = "Clean" if dup_count == 0 else f"{dup_count} Dups"
 
         st.markdown(f"""
-        <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:0.75rem; padding:0.875rem; margin-bottom:1rem;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
-                <span style="font-size:0.75rem; font-weight:700; color:#0F172A;">{st.session_state.filename}</span>
-                <span class="kpi-badge {quality_badge}">{quality_text}</span>
+        <div style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:8px;padding:12px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <span style="font-size:13px;font-weight:600;color:#0F172A;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Inter',sans-serif;">{st.session_state.filename}</span>
+                <span class="badge-pill {quality_badge}">{quality_text}</span>
             </div>
-            <div style="font-size:0.75rem; color:#64748B;">
-                <strong>{eda_side.total_rows:,}</strong> rows × <strong>{eda_side.total_columns}</strong> cols
+            <div style="font-size:12px;color:#475569;">
+                <strong>{eda_side.total_rows:,}</strong> records &times; <strong>{eda_side.total_columns}</strong> columns
             </div>
-            <div style="font-size:0.7rem; color:#94A3B8; margin-top:0.25rem;">
-                Missing: {health_side.missing_percentage:.1f}% • Profiles: {len(eda_side.numeric_profiles)} num
+            <div style="font-size:11px;color:#94A3B8;margin-top:4px;">
+                Missing: {health_side.missing_percentage:.1f}% &bull; {len(eda_side.numeric_profiles)} numeric profiles
             </div>
         </div>
         """, unsafe_allow_html=True)
 
         st.markdown('<div class="sidebar-section-title">OpenAI Engine Config</div>', unsafe_allow_html=True)
         if openai_ready:
-            st.markdown("""
-            <div style="font-size:0.75rem; color:#059669; background:#ECFDF5; border:1px solid #D1FAE5; padding:0.5rem 0.75rem; border-radius:0.5rem; font-weight:600;">
-                ✓ OpenAI API Key Connected
+            st.markdown(f"""
+            <div style="font-size:12px;color:#059669;background:#ECFDF5;border:1px solid #D1FAE5;padding:8px 12px;border-radius:8px;font-weight:500;display:flex;align-items:center;gap:6px;">
+                {ICONS['check']} API Key Connected (GPT-4o)
             </div>
             """, unsafe_allow_html=True)
         else:
             api_key = st.text_input(
-                "OpenAI API Key",
-                type="password",
-                placeholder="sk-proj-...",
-                key="input_api_key",
+                "OpenAI API Key", type="password",
+                placeholder="sk-proj-...", key="input_api_key",
                 help="Stored only in local session memory.",
             )
             if api_key:
                 os.environ["OPENAI_API_KEY"] = api_key
                 st.rerun()
 
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("↺ Reset Session", use_container_width=True, type="secondary", key="btn_reset_all"):
+        st.markdown("<div style='height:12px;'></div>", unsafe_allow_html=True)
+        if st.button("&#8635; Reset Session", use_container_width=True, type="secondary", key="btn_reset_all"):
             for k in ["dataset", "filename", "health_report", "eda_report",
                       "inferred_types", "cleaned_df", "clean_log", "query_history"]:
                 st.session_state[k] = None if k not in ["clean_log", "query_history"] else []
             st.rerun()
 
+
 if not has_dataset:
-    st.markdown("""
-    <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:1.25rem; padding:4rem 2rem; text-align:center; max-width:680px; margin:2rem auto; box-shadow:0 1px 3px rgba(15,23,42,0.04);">
-        <div style="width:4rem; height:4rem; border-radius:1rem; background:#EEF2FF; color:#4F46E5; display:inline-flex; align-items:center; justify-content:center; font-size:2rem; margin-bottom:1.25rem;">
-            📊
-        </div>
-        <h2 style="font-size:1.35rem; font-weight:800; color:#0F172A; margin-bottom:0.5rem;">Upload a Dataset to Begin</h2>
-        <p style="font-size:0.875rem; color:#64748B; max-width:440px; margin:0 auto 1.75rem; line-height:1.6;">
-            Drop your CSV or Excel file into the sidebar or click a benchmark sample to activate the statistical profiling and conversational analysis lab.
+    st.markdown(f"""
+    <div class="empty-drop-zone">
+        <div class="empty-upload-icon">{ICONS['upload_cloud']}</div>
+        <h2 class="empty-title">Upload a dataset to begin</h2>
+        <p class="empty-desc">
+            Drag and drop a CSV or Excel file into the sidebar, or select one of the curated benchmark datasets below to explore instant statistical profiling and conversational analytics.
         </p>
     </div>
+    <div class="connecting-label-row">
+        <div class="connecting-line"></div>
+        <span class="connecting-text">or start with a sample</span>
+        <div class="connecting-line"></div>
+    </div>
     """, unsafe_allow_html=True)
-    
-    col_c1, col_c2 = st.columns(2)
-    with col_c1:
-        st.markdown("""
-        <div class="threadline-card" style="text-align:center;">
-            <div style="font-size:1.5rem; margin-bottom:0.5rem;">📈</div>
-            <strong style="color:#0F172A;">Sample 1: Retail Sales</strong>
-            <p style="font-size:0.78rem; color:#64748B; margin-top:0.25rem;">Clean e-commerce dataset with 1,000 transactions, categories, and profits.</p>
+
+    c_empty1, c_empty2 = st.columns(2)
+    with c_empty1:
+        st.markdown(f"""
+        <div class="sample-card sample-card-indigo">
+            <div>
+                <div class="sample-card-icon sample-icon-indigo">{ICONS['trending_up']}</div>
+                <div class="sample-card-title">Retail Sales Analytics</div>
+                <div class="sample-card-desc">Clean e-commerce dataset with 1,000 transactions, product categories, and revenue.</div>
+            </div>
         </div>
         """, unsafe_allow_html=True)
         if st.button("Load Retail Sales Sample", use_container_width=True, type="primary", key="btn_empty_sales"):
             _load_data_source("sample_data/sales_clean.csv", "sales_clean.csv")
             st.rerun()
-    with col_c2:
-        st.markdown("""
-        <div class="threadline-card" style="text-align:center;">
-            <div style="font-size:1.5rem; margin-bottom:0.5rem;">👥</div>
-            <strong style="color:#0F172A;">Sample 2: Customer Churn</strong>
-            <p style="font-size:0.78rem; color:#64748B; margin-top:0.25rem;">Messy real-world customer records with missing tokens, whitespace, and duplicates.</p>
+    with c_empty2:
+        st.markdown(f"""
+        <div class="sample-card sample-card-cyan">
+            <div>
+                <div class="sample-card-icon sample-icon-cyan">{ICONS['users']}</div>
+                <div class="sample-card-title">Customer Churn (Messy)</div>
+                <div class="sample-card-desc">Real-world subscription records with null tokens, whitespace issues, and duplicate rows.</div>
+            </div>
         </div>
         """, unsafe_allow_html=True)
         if st.button("Load Churn Sample", use_container_width=True, type="secondary", key="btn_empty_churn"):
             _load_data_source("sample_data/customer_churn_messy.csv", "customer_churn_messy.csv")
             st.rerun()
     st.stop()
+
+
 df = st.session_state.dataset
 health = st.session_state.health_report
 eda = st.session_state.eda_report
 types = st.session_state.inferred_types
 
 tab_overview, tab_chat, tab_health_page, tab_explorer = st.tabs([
-    "📊 Overview Dashboard",
-    "💬 Conversational Workspace",
-    "🛡️ Data Health & Diagnostics",
-    "🔍 Raw Data Explorer",
+    "Overview Dashboard",
+    "Conversational Workspace",
+    "Data Health & Diagnostics",
+    "Raw Data Explorer",
 ])
 
 with tab_overview:
@@ -592,60 +613,60 @@ with tab_overview:
     cat_profs = len(eda.categorical_profiles) if eda else 0
     quality_score = max(0, int(100 - (missing_pct * 1.5) - (dup_rows * 2)))
 
+    missing_icon_cls = "icon-amber" if missing_pct >= 5 else "icon-emerald"
+    missing_badge_cls = "badge-amber" if missing_pct >= 5 else "badge-emerald"
+    missing_badge_txt = "Missing Found" if missing_pct >= 5 else "Optimal"
+    dup_icon_cls = "icon-rose" if dup_rows > 0 else "icon-emerald"
+    dup_badge_cls = "badge-rose" if dup_rows > 0 else "badge-emerald"
+    dup_badge_txt = f"{dup_rows} Dups" if dup_rows > 0 else "Zero Dups"
+    dup_meta = "Deduplication ready" if dup_rows > 0 else "No redundancy"
+
     kpi_html = f"""
     <div class="kpi-row">
-        <div class="kpi-card-threadline">
-            <div class="kpi-top">
-                <div class="kpi-icon-pill icon-indigo">🗂️</div>
-                <span class="kpi-badge badge-indigo">100% Parsed</span>
+        <div class="kpi-card">
+            <div class="kpi-top-row">
+                <div class="kpi-icon-pill icon-indigo">{ICONS['folder']}</div>
+                <span class="badge-pill badge-indigo">100% Parsed</span>
             </div>
-            <div class="kpi-label">Total Records</div>
-            <div class="kpi-val">{len(df):,}</div>
-            <div class="kpi-subtext">Rows loaded in memory</div>
+            <div class="kpi-label-text">Total Records</div>
+            <div class="kpi-value-text">{len(df):,}</div>
+            <div class="kpi-meta-text">Rows loaded in memory</div>
         </div>
-
-        <div class="kpi-card-threadline">
-            <div class="kpi-top">
-                <div class="kpi-icon-pill icon-violet">📊</div>
-                <span class="kpi-badge badge-slate">{num_profs} Num • {cat_profs} Cat</span>
+        <div class="kpi-card">
+            <div class="kpi-top-row">
+                <div class="kpi-icon-pill icon-violet">{ICONS['columns']}</div>
+                <span class="badge-pill badge-slate">{num_profs} Num &bull; {cat_profs} Cat</span>
             </div>
-            <div class="kpi-label">Total Columns</div>
-            <div class="kpi-val">{len(df.columns)}</div>
-            <div class="kpi-subtext">Distinct features inferred</div>
+            <div class="kpi-label-text">Total Columns</div>
+            <div class="kpi-value-text">{len(df.columns)}</div>
+            <div class="kpi-meta-text">Inferred dimensions</div>
         </div>
-
-        <div class="kpi-card-threadline">
-            <div class="kpi-top">
-                <div class="kpi-icon-pill {'icon-emerald' if missing_pct < 5 else 'icon-amber'}">⚠️</div>
-                <span class="kpi-badge {'badge-emerald' if missing_pct < 5 else 'badge-amber'}">
-                    {'Optimal' if missing_pct < 5 else 'Missing Found'}
-                </span>
+        <div class="kpi-card">
+            <div class="kpi-top-row">
+                <div class="kpi-icon-pill {missing_icon_cls}">{ICONS['alert_triangle']}</div>
+                <span class="badge-pill {missing_badge_cls}">{missing_badge_txt}</span>
             </div>
-            <div class="kpi-label">Missing Cells</div>
-            <div class="kpi-val">{health.missing_cells if health else 0:,}</div>
-            <div class="kpi-subtext">{missing_pct:.1f}% overall missingness</div>
+            <div class="kpi-label-text">Missing Cells</div>
+            <div class="kpi-value-text">{health.missing_cells if health else 0:,}</div>
+            <div class="kpi-meta-text">{missing_pct:.1f}% overall missingness</div>
         </div>
-
-        <div class="kpi-card-threadline">
-            <div class="kpi-top">
-                <div class="kpi-icon-pill {'icon-emerald' if dup_rows == 0 else 'icon-rose'}">👥</div>
-                <span class="kpi-badge {'badge-emerald' if dup_rows == 0 else 'badge-rose'}">
-                    {'Zero Dups' if dup_rows == 0 else f'{dup_rows} Dups'}
-                </span>
+        <div class="kpi-card">
+            <div class="kpi-top-row">
+                <div class="kpi-icon-pill {dup_icon_cls}">{ICONS['copy']}</div>
+                <span class="badge-pill {dup_badge_cls}">{dup_badge_txt}</span>
             </div>
-            <div class="kpi-label">Duplicate Rows</div>
-            <div class="kpi-val">{dup_rows}</div>
-            <div class="kpi-subtext">{'No redundancy detected' if dup_rows == 0 else 'Deduplication ready'}</div>
+            <div class="kpi-label-text">Duplicate Rows</div>
+            <div class="kpi-value-text">{dup_rows}</div>
+            <div class="kpi-meta-text">{dup_meta}</div>
         </div>
-
-        <div class="kpi-card-threadline">
-            <div class="kpi-top">
-                <div class="kpi-icon-pill icon-emerald">✨</div>
-                <span class="kpi-badge badge-emerald">Data Health</span>
+        <div class="kpi-card">
+            <div class="kpi-top-row">
+                <div class="kpi-icon-pill icon-emerald">{ICONS['star']}</div>
+                <span class="badge-pill badge-emerald">Composite</span>
             </div>
-            <div class="kpi-label">Quality Index</div>
-            <div class="kpi-val">{quality_score}/100</div>
-            <div class="kpi-subtext">Composite health score</div>
+            <div class="kpi-label-text">Quality Score</div>
+            <div class="kpi-value-text">{quality_score}/100</div>
+            <div class="kpi-meta-text">Health index benchmark</div>
         </div>
     </div>
     """
@@ -653,21 +674,17 @@ with tab_overview:
 
     if eda and eda.summary_narrative:
         st.markdown(f"""
-        <div class="threadline-card" style="border-left: 4px solid #4F46E5;">
-            <div class="threadline-card-header">
-                <span class="card-header-title">
-                    <span>⚡</span> AI Executive Synthesis & Distribution Insights
-                </span>
-                <span class="kpi-badge badge-indigo">Automated Profiling</span>
+        <div class="threadline-card" style="border-left: 3px solid #4F46E5;">
+            <div class="card-header-bar">
+                <span class="card-title-text">{ICONS['sparkles']} AI Executive Synthesis</span>
+                <span class="badge-pill badge-indigo">Automated Profiling</span>
             </div>
-            <p style="font-size:0.92rem; color:#334155; line-height:1.65; margin:0;">
-                {eda.summary_narrative}
-            </p>
+            <p style="font-size:13px;color:#334155;line-height:1.6;margin:0;">{eda.summary_narrative}</p>
         </div>
         """, unsafe_allow_html=True)
 
     if eda and eda.numeric_profiles:
-        st.markdown('<div class="card-header-title" style="margin: 1.5rem 0 1rem;">📈 Numeric Dimension Benchmarks</div>', unsafe_allow_html=True)
+        st.markdown('<div class="card-overline" style="margin: 20px 0 10px;">Numeric Dimension Benchmarks</div>', unsafe_allow_html=True)
         chunk_size = 3
         for i in range(0, len(eda.numeric_profiles), chunk_size):
             chunk = eda.numeric_profiles[i : i + chunk_size]
@@ -677,88 +694,75 @@ with tab_overview:
                     fig = go.Figure(go.Indicator(
                         mode="number+delta+gauge",
                         value=prof.mean,
-                        number={"font": {"size": 22, "family": "Plus Jakarta Sans", "color": "#0F172A"}},
-                        delta={"reference": prof.median, "relative": False, "position": "bottom",
-                               "valueformat": ".2f"},
+                        number={"font": {"size": 20, "family": "Inter", "color": "#0F172A"}},
+                        delta={"reference": prof.median, "relative": False, "position": "bottom", "valueformat": ".2f"},
                         gauge={
                             "axis": {"range": [prof.min, prof.max], "tickfont": {"size": 9, "color": "#64748B"}},
-                            "bar": {"color": "#4F46E5"},
-                            "bgcolor": "#F8FAFC",
-                            "borderwidth": 0,
+                            "bar": {"color": "#4F46E5"}, "bgcolor": "#F8FAFC", "borderwidth": 0,
                             "steps": [
                                 {"range": [prof.min, prof.q1], "color": "#EEF2FF"},
                                 {"range": [prof.q1, prof.q3], "color": "#E0E7FF"},
                             ],
                         },
-                        title={"text": f"<b>{prof.column}</b><br><span style='font-size:10px; color:#64748B;'>Mean vs Median</span>",
-                               "font": {"size": 13, "family": "Plus Jakarta Sans"}},
+                        title={"text": f"<b>{prof.column}</b><br><span style='font-size:11px;color:#64748B;'>Mean vs Median</span>",
+                               "font": {"size": 13, "family": "Inter"}},
                     ))
-                    fig.update_layout(
-                        height=210,
-                        margin=dict(l=15, r=15, t=45, b=15),
-                        paper_bgcolor="#FFFFFF",
-                        plot_bgcolor="#FFFFFF",
-                    )
+                    fig.update_layout(height=195, margin=dict(l=12, r=12, t=40, b=12),
+                                      paper_bgcolor="#FFFFFF", plot_bgcolor="#FFFFFF")
                     st.plotly_chart(fig, use_container_width=True, key=f"gauge_{prof.column}")
                     if prof.outlier_count > 0:
-                        st.caption(f"⚠️ **{prof.outlier_count}** statistical outlier(s) detected via IQR.")
+                        st.caption(f"**{prof.outlier_count}** outlier(s) detected via IQR.")
 
     if eda and eda.categorical_profiles:
-        st.markdown('<div class="card-header-title" style="margin: 1.5rem 0 1rem;">🏷️ Categorical Distributions & Cardinality</div>', unsafe_allow_html=True)
+        st.markdown('<div class="card-overline" style="margin: 20px 0 10px;">Categorical Distributions &amp; Cardinality</div>', unsafe_allow_html=True)
         cat_cols = st.columns(min(len(eda.categorical_profiles), 3))
         for idx, cat_p in enumerate(eda.categorical_profiles[:3]):
             with cat_cols[idx]:
                 if cat_p.top_categories:
                     cat_df = pd.DataFrame(cat_p.top_categories)
-                    fig = px.bar(
-                        cat_df.head(7),
-                        x="count", y="value", orientation="h",
-                        title=f"{cat_p.column} ({cat_p.cardinality} unique)",
-                        color_discrete_sequence=["#4F46E5"],
-                        template="none",
-                    )
+                    fig = px.bar(cat_df.head(7), x="count", y="value", orientation="h",
+                                 title=f"{cat_p.column} ({cat_p.cardinality} unique)",
+                                 color_discrete_sequence=["#4F46E5"], template="none")
                     fig.update_layout(
-                        height=260,
-                        margin=dict(l=8, r=8, t=36, b=8),
-                        paper_bgcolor="#FFFFFF",
-                        plot_bgcolor="#FFFFFF",
+                        height=240, margin=dict(l=8, r=8, t=32, b=8),
+                        paper_bgcolor="#FFFFFF", plot_bgcolor="#FFFFFF",
                         yaxis=dict(title="", autorange="reversed", tickfont=dict(color="#334155", size=10)),
                         xaxis=dict(title="Count", showgrid=True, gridcolor="#F1F5F9", tickfont=dict(color="#64748B")),
-                        font=dict(family="Plus Jakarta Sans", size=11),
+                        font=dict(family="Inter", size=11),
                     )
                     st.plotly_chart(fig, use_container_width=True, key=f"cat_{cat_p.column}")
 
     if eda and eda.datetime_profiles:
-        st.markdown('<div class="card-header-title" style="margin: 1.5rem 0 1rem;">📅 Temporal Dimensions</div>', unsafe_allow_html=True)
+        st.markdown('<div class="card-overline" style="margin: 20px 0 10px;">Temporal Dimensions</div>', unsafe_allow_html=True)
         for dt_p in eda.datetime_profiles:
             st.markdown(f"""
-            <div class="threadline-card" style="display:flex; justify-content:space-between; align-items:center; padding:1rem 1.25rem;">
+            <div class="threadline-card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;">
                 <div>
-                    <strong style="color:#0F172A; font-size:0.9rem;">{dt_p.column}</strong>
-                    <span style="color:#64748B; font-size:0.75rem; margin-left:0.5rem;">Detected Frequency: <strong>{dt_p.detected_frequency}</strong></span>
+                    <strong style="color:#0F172A;font-size:13px;font-family:'Inter',sans-serif;">{dt_p.column}</strong>
+                    <span style="color:#64748B;font-size:12px;margin-left:8px;">Frequency: <strong>{dt_p.detected_frequency}</strong></span>
                 </div>
-                <div style="font-size:0.8rem; color:#475569;">
-                    <span class="kpi-badge badge-indigo">{dt_p.min_date} → {dt_p.max_date}</span>
-                    <span style="color:#94A3B8; margin-left:0.5rem;">({dt_p.date_range_days} days)</span>
+                <div style="font-size:12px;color:#475569;">
+                    <span class="badge-pill badge-indigo">{dt_p.min_date} &rarr; {dt_p.max_date}</span>
+                    <span style="color:#94A3B8;margin-left:6px;">({dt_p.date_range_days} days)</span>
                 </div>
             </div>
             """, unsafe_allow_html=True)
+
+
 with tab_chat:
-    st.markdown("""
+    st.markdown(f"""
     <div class="threadline-card">
-        <div class="threadline-card-header">
-            <span class="card-header-title">
-                <span>💬</span> Natural Language Analysis Assistant
-            </span>
-            <span class="kpi-badge badge-indigo">Zero Data Leakage • Schema-Only Prompts</span>
+        <div class="card-header-bar">
+            <span class="card-title-text">{ICONS['message_square']} Conversational Analysis Assistant</span>
+            <span class="badge-pill badge-indigo">Zero Data Leakage &bull; Schema Prompts</span>
         </div>
-        <p style="font-size:0.875rem; color:#64748B; margin:0;">
-            Ask any analytical question in plain English. The query engine generates sandboxed Python Pandas & Plotly code and executes it within an isolated subprocess in under 5 seconds.
+        <p style="font-size:13px;color:#64748B;margin:0;line-height:1.5;">
+            Ask questions in plain English. The query engine generates sandboxed Python Pandas &amp; Plotly code and executes it within an isolated subprocess in under 5 seconds.
         </p>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("<span style='font-size:0.75rem; font-weight:700; color:#64748B; text-transform:uppercase;'>Suggested Prompts:</span>", unsafe_allow_html=True)
+    st.markdown("<span class='card-overline'>Suggested Prompts:</span>", unsafe_allow_html=True)
     examples = [
         "What is the total revenue by category?",
         "Show monthly sales trend",
@@ -769,7 +773,7 @@ with tab_chat:
     pill_cols = st.columns(len(examples))
     for i, ex in enumerate(examples):
         with pill_cols[i]:
-            if st.button(ex, key=f"pill_{i}", use_container_width=True):
+            if st.button(ex, key=f"pill_{i}", use_container_width=True, type="secondary"):
                 st.session_state["pending_question"] = ex
 
     col_input, col_run, col_clear = st.columns([6, 1.5, 1])
@@ -782,9 +786,9 @@ with tab_chat:
             label_visibility="collapsed",
         )
     with col_run:
-        execute_click = st.button("⚡ Run Analysis", type="primary", use_container_width=True, key="btn_exec_query")
+        execute_click = st.button("Run Analysis", type="primary", use_container_width=True, key="btn_exec_query")
     with col_clear:
-        if st.button("Clear History", type="secondary", use_container_width=True, key="btn_clear_thread"):
+        if st.button("Clear", type="secondary", use_container_width=True, key="btn_clear_thread"):
             st.session_state.query_history = []
             st.rerun()
 
@@ -792,7 +796,7 @@ with tab_chat:
         del st.session_state["pending_question"]
 
     if execute_click and user_input.strip():
-        with st.spinner("Generating analytical plan & sandboxed execution..."):
+        with st.spinner("Generating analytical plan & executing sandboxed code..."):
             query_res = run_query(user_input.strip(), df, types)
             if query_res.error:
                 st.error(f"Query Engine Error: {query_res.error}")
@@ -814,19 +818,15 @@ with tab_chat:
     if st.session_state.query_history:
         st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
         for idx, item in enumerate(st.session_state.query_history):
+            mode_label = "Offline Mock Mode" if item.get("is_mock") else "GPT-4o Plan"
             st.markdown(f"""
             <div class="chat-turn">
-                <div class="chat-user-bubble">
-                    {item['question']}
-                </div>
+                <div class="chat-user-bubble">{item['question']}</div>
                 <div class="chat-assistant-bubble">
                     <div class="chat-meta-pill">
-                        ⚡ In-Memory AST Sandbox • {item['time_ms']}ms execution
-                        {'• Offline Mock Mode' if item.get('is_mock') else '• GPT-4o Synthesis'}
+                        {ICONS['zap_indigo']} In-Memory AST Sandbox &bull; {item['time_ms']}ms &bull; {mode_label}
                     </div>
-                    <div class="chat-answer-text">
-                        {item['answer']}
-                    </div>
+                    <div class="chat-answer-text">{item['answer']}</div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -834,73 +834,65 @@ with tab_chat:
             if item["result_type"] == "chart" and item["result_json"]:
                 try:
                     fig = pio.from_json(item["result_json"])
-                    fig.update_layout(
-                        paper_bgcolor="#FFFFFF",
-                        plot_bgcolor="#FFFFFF",
-                        margin=dict(l=10, r=10, t=35, b=10),
-                        height=420,
-                        font=dict(family="Plus Jakarta Sans"),
-                    )
+                    fig.update_layout(paper_bgcolor="#FFFFFF", plot_bgcolor="#FFFFFF",
+                                      margin=dict(l=10, r=10, t=32, b=10), height=400,
+                                      font=dict(family="Inter", size=11))
                     st.plotly_chart(fig, use_container_width=True, key=f"chat_fig_{idx}")
                 except Exception as err:
                     st.warning(f"Chart render issue: {err}")
-
             elif item["result_type"] == "table" and item["result_json"]:
                 try:
                     tbl = pd.read_json(item["result_json"], orient="records")
-                    st.dataframe(tbl, use_container_width=True, height=280, key=f"chat_tbl_{idx}")
+                    st.dataframe(tbl, use_container_width=True, height=260, key=f"chat_tbl_{idx}")
                 except Exception as err:
                     st.warning(f"Table render issue: {err}")
-
             elif item["result_type"] == "scalar" and item["result_json"]:
-                st.metric("Computed Value", item["result_json"])
-
+                st.metric("Computed Metric", item["result_json"])
             elif item["result_type"] == "error":
                 st.error(f"Sandbox Runtime Error: {item.get('error', 'Execution interrupted')}")
 
             if item.get("code"):
-                with st.expander("🔍 Inspect Sandboxed Python Code (Explainability)", expanded=False):
+                with st.expander("Inspect Executed Python Code (AST Verified)", expanded=False):
                     st.markdown(f'<div class="code-box">{item["code"]}</div>', unsafe_allow_html=True)
-                    st.caption(f"Code verified via AST allowlist • Completed in {item['time_ms']}ms")
+                    st.caption(f"Verified via AST allowlist &bull; Executed in {item['time_ms']}ms")
 
-            st.markdown("<hr style='border:0; border-top:1px solid #E2E8F0; margin:1.5rem 0;'>", unsafe_allow_html=True)
+            st.markdown("<hr style='border:0;border-top:1px solid #E2E8F0;margin:16px 0;'>", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
     else:
         st.markdown("""
-        <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:1rem; padding:3rem 1.5rem; text-align:center; color:#94A3B8; margin-top:1.5rem;">
-            <div style="font-size:2.5rem; margin-bottom:0.5rem;">💬</div>
-            <strong style="color:#475569;">No queries in this session yet</strong>
-            <p style="font-size:0.8rem; color:#94A3B8; margin-top:0.25rem;">Select a suggested prompt above or ask any question to inspect results.</p>
+        <div style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:12px;padding:32px 16px;text-align:center;color:#94A3B8;margin-top:16px;">
+            <strong style="color:#475569;font-size:13px;">No queries in this session yet</strong>
+            <p style="font-size:12px;color:#94A3B8;margin-top:4px;">Select a prompt above or ask any question to inspect results.</p>
         </div>
         """, unsafe_allow_html=True)
+
+
 with tab_health_page:
-    st.markdown("""
+    st.markdown(f"""
     <div class="threadline-card">
-        <div class="threadline-card-header">
-            <span class="card-header-title">
-                <span>🛡️</span> Data Health & Quality Assurance Audit
-            </span>
-            <span class="kpi-badge badge-emerald">Non-Destructive Operations</span>
+        <div class="card-header-bar">
+            <span class="card-title-text">{ICONS['shield']} Data Quality &amp; Health Diagnostics</span>
+            <span class="badge-pill badge-emerald">Non-Destructive Operations</span>
         </div>
-        <p style="font-size:0.875rem; color:#64748B; margin:0;">
-            Comprehensive audit inspecting null token normalizations, trailing whitespaces, duplicate rows, and column type fidelity.
+        <p style="font-size:13px;color:#64748B;margin:0;line-height:1.5;">
+            Transparent audit verifying null token distributions, whitespace anomalies, duplicate rows, and schema fidelity.
         </p>
     </div>
     """, unsafe_allow_html=True)
 
     if health.anomalies:
         for anomaly in health.anomalies:
-            st.warning(f"⚠️ **Anomaly Identified:** {anomaly}")
+            st.warning(f"**Anomaly Identified:** {anomaly}")
 
     if health.cleaning_recommendations:
-        st.markdown("**Recommended Remediations:**")
+        st.markdown("<span class='card-overline'>Recommended Remediations:</span>", unsafe_allow_html=True)
         for rec in health.cleaning_recommendations:
             st.markdown(f"- {rec}")
 
-    st.markdown('<div class="card-header-title" style="margin: 1.5rem 0 0.75rem;">📋 Column Health Breakdown</div>', unsafe_allow_html=True)
+    st.markdown('<div class="card-overline" style="margin:20px 0 8px;">Column Health Diagnostics</div>', unsafe_allow_html=True)
     c_rows = []
     for col_n, col_h in health.columns_health.items():
-        warns = " | ".join(col_h.warnings) if col_h.warnings else "✓ Healthy"
+        warns = " | ".join(col_h.warnings) if col_h.warnings else "Healthy"
         c_rows.append({
             "Column": col_n,
             "Detected Type": col_h.inferred_type,
@@ -909,9 +901,9 @@ with tab_health_page:
             "Sample Values": ", ".join(str(v) for v in col_h.sample_values[:3]),
             "Diagnostic Status": warns,
         })
-    st.dataframe(pd.DataFrame(c_rows), use_container_width=True, height=360)
+    st.dataframe(pd.DataFrame(c_rows), use_container_width=True, height=340)
 
-    st.markdown('<div class="card-header-title" style="margin: 1.5rem 0 0.75rem;">⚙️ 1-Click Non-Destructive Cleaning Pipeline</div>', unsafe_allow_html=True)
+    st.markdown('<div class="card-overline" style="margin:20px 0 8px;">1-Click Non-Destructive Cleaning Pipeline</div>', unsafe_allow_html=True)
     cl_col1, cl_col2, cl_col3, cl_col4 = st.columns(4)
     with cl_col1:
         opt_dedup = st.checkbox("Remove duplicate rows", value=True, key="c_dedup")
@@ -922,40 +914,36 @@ with tab_health_page:
     with cl_col4:
         opt_num = st.checkbox("Coerce numeric text fields", value=True, key="c_num")
 
-    if st.button("⚡ Clean & Remediate Dataset", type="primary", key="btn_clean_exec"):
+    if st.button("Clean & Remediate Dataset", type="primary", key="btn_clean_exec"):
         with st.spinner("Executing non-destructive cleaning pipeline..."):
             cleaned, log_actions = clean_dataset(
-                df,
-                remove_duplicates=opt_dedup,
-                strip_whitespace=opt_ws,
-                normalize_nulls=opt_null,
-                coerce_numeric=opt_num,
+                df, remove_duplicates=opt_dedup, strip_whitespace=opt_ws,
+                normalize_nulls=opt_null, coerce_numeric=opt_num,
             )
         st.session_state.cleaned_df = cleaned
         st.session_state.clean_log = log_actions
         if log_actions:
             for action in log_actions:
-                st.success(f"✓ {action}")
+                st.success(f"{action}")
         else:
-            st.info("No modifications needed — dataset satisfies all quality thresholds.")
+            st.info("No modifications needed \u2014 dataset satisfies all quality thresholds.")
 
     if st.session_state.cleaned_df is not None:
-        if st.button("💾 Replace Active Session Dataset with Cleaned Copy", type="secondary", key="btn_replace_cleaned"):
+        if st.button("Replace Active Session Dataset with Cleaned Copy", type="secondary", key="btn_replace_cleaned"):
             _load_data_source(st.session_state.cleaned_df, f"Cleaned_{st.session_state.filename}")
             st.success("Active dataset updated to cleaned version.")
             st.rerun()
 
+
 with tab_explorer:
     st.markdown(f"""
     <div class="threadline-card">
-        <div class="threadline-card-header">
-            <span class="card-header-title">
-                <span>🔍</span> Interactive Raw Data Grid
-            </span>
-            <span class="kpi-badge badge-slate">Viewing {len(df):,} records</span>
+        <div class="card-header-bar">
+            <span class="card-title-text">{ICONS['table']} Interactive Raw Data Grid</span>
+            <span class="badge-pill badge-slate">Viewing {len(df):,} records</span>
         </div>
-        <p style="font-size:0.875rem; color:#64748B; margin:0;">
-            Filter, sort, and inspect tabular records. Export cleaned records directly to CSV.
+        <p style="font-size:13px;color:#64748B;margin:0;line-height:1.5;">
+            Filter, sort, and inspect tabular records. Export filtered views directly to CSV.
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -967,11 +955,11 @@ with tab_explorer:
         row_limit = st.selectbox("Rows limit", [50, 100, 500, 1000, len(df)], index=1, key="grid_limit")
 
     filtered_df = df[col_selector].head(row_limit) if col_selector else df.head(row_limit)
-    st.dataframe(filtered_df, use_container_width=True, height=450)
+    st.dataframe(filtered_df, use_container_width=True, height=420)
 
-    csv_bytes = filtered_df.to_csv(index=False).encode('utf-8')
+    csv_bytes = filtered_df.to_csv(index=False).encode("utf-8")
     st.download_button(
-        label="📥 Export Current View to CSV",
+        label="Export View to CSV",
         data=csv_bytes,
         file_name=f"export_{st.session_state.filename}",
         mime="text/csv",
