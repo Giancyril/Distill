@@ -593,10 +593,11 @@ health = st.session_state.health_report
 eda = st.session_state.eda_report
 types = st.session_state.inferred_types
 
-tab_overview, tab_chat, tab_health_page, tab_explorer = st.tabs([
+tab_overview, tab_chat, tab_health_page, tab_automl, tab_explorer = st.tabs([
     "Overview Dashboard",
     "Conversational Workspace",
     "Data Health & Diagnostics",
+    "Predictive Modeling Studio",
     "Raw Data Explorer",
 ])
 
@@ -927,6 +928,76 @@ with tab_health_page:
             _load_data_source(st.session_state.cleaned_df, f"Cleaned_{st.session_state.filename}")
             st.success("Active dataset updated to cleaned version.")
             st.rerun()
+
+
+
+with tab_automl:
+    st.markdown("""
+    <div class="card-header-bar">
+        <div>
+            <div class="card-overline">SUPERVISED INTELLIGENCE</div>
+            <div class="card-title-text">AutoML & Predictive Modeling Studio</div>
+        </div>
+        <span class="badge badge-indigo">Multi-Model Tournament</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    c_sel1, c_sel2, c_sel3 = st.columns([2, 1, 1])
+    with c_sel1:
+        target_candidate = st.selectbox(
+            "Prediction Target Variable",
+            options=list(df.columns),
+            index=len(df.columns) - 1,
+            key="automl_target_col"
+        )
+    with c_sel2:
+        try:
+            inferred_tt = infer_task_type(df, target_candidate)
+            default_idx = 0 if inferred_tt == TaskType.CLASSIFICATION else 1
+        except Exception:
+            default_idx = 0
+        chosen_task_str = st.selectbox(
+            "Task Type",
+            options=["Classification", "Regression"],
+            index=default_idx,
+            key="automl_task_type"
+        )
+        task_enum = TaskType.CLASSIFICATION if chosen_task_str == "Classification" else TaskType.REGRESSION
+    with c_sel3:
+        st.markdown("<div style='height:28px;'></div>", unsafe_allow_html=True)
+        run_tourney = st.button("Launch Tournament", type="primary", use_container_width=True, key="btn_run_automl")
+
+    if run_tourney:
+        with st.spinner(f"Training 5 candidate models against '{target_candidate}'..."):
+            try:
+                res = run_automl_tournament(df, target_candidate, task_type=task_enum)
+                st.session_state.automl_result = res
+                st.success(f"Tournament complete! Winner: {res.best_model_name}")
+            except Exception as e:
+                st.error(f"AutoML tournament failed: {e}")
+
+    automl_res = st.session_state.automl_result
+    if automl_res is not None and automl_res.target_column in df.columns:
+        st.markdown(f"""
+        <div class="distill-card" style="margin-top:16px; margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <div style="font-size:11px; font-weight:600; letter-spacing:0.05em; color:#4F46E5; text-transform:uppercase;">TOURNAMENT WINNER</div>
+                    <div style="font-size:18px; font-weight:700; color:#0F172A; margin-top:2px;">{automl_res.best_model_name}</div>
+                </div>
+                <span class="badge badge-emerald">Best Benchmark Score</span>
+            </div>
+            <p style="font-size:13px; color:#64748B; margin:8px 0 0 0;">{automl_res.summary}</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("<div style='font-size:14px; font-weight:600; color:#0F172A; margin-bottom:10px;'>Leaderboard & Candidate Comparison</div>", unsafe_allow_html=True)
+        leaderboard_rows = []
+        for idx, cand in enumerate(automl_res.candidate_models):
+            row = {"Rank": f"#{idx+1}", "Model Architecture": cand.model_name, "Fit Time (s)": cand.fit_time_seconds}
+            row.update(cand.metrics)
+            leaderboard_rows.append(row)
+        st.dataframe(pd.DataFrame(leaderboard_rows), use_container_width=True, hide_index=True)
 
 
 with tab_explorer:
