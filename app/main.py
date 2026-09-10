@@ -303,6 +303,14 @@ code, pre, .font-mono {
 .connecting-line { flex: 1; height: 1px; background: #E2E8F0; }
 .connecting-text { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #94A3B8; }
 
+
+/* === Export Dossier Card === */
+.export-card {
+    background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px;
+    padding: 12px 16px; margin-bottom: 16px; display: flex;
+    justify-content: space-between; align-items: center;
+}
+
 /* === Sample cards \u2014 physically liftable === */
 .sample-card {
     background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px;
