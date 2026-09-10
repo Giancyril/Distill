@@ -355,3 +355,57 @@ class DatasetVersionManager:
                 "action": snap.action_applied.description if snap.action_applied else "Baseline Ingestion",
             })
         return logs
+
+
+
+@dataclass
+class DatasetDiff:
+    rows_before: int
+    rows_after: int
+    rows_delta: int
+    cols_before: int
+    cols_after: int
+    cols_delta: int
+    columns_added: List[str]
+    columns_removed: List[str]
+    missing_before: int
+    missing_after: int
+    missing_delta: int
+    memory_before_kb: float
+    memory_after_kb: float
+
+
+def compute_dataset_diff(before_df: pd.DataFrame, after_df: pd.DataFrame) -> DatasetDiff:
+    """
+    Computes precise comparative deltas between two dataset versions.
+    """
+    r_before, c_before = before_df.shape
+    r_after, c_after = after_df.shape
+
+    set_before = set(before_df.columns)
+    set_after = set(after_df.columns)
+
+    added = sorted(list(set_after - set_before))
+    removed = sorted(list(set_before - set_after))
+
+    miss_before = int(before_df.isna().sum().sum())
+    miss_after = int(after_df.isna().sum().sum())
+
+    mem_before = round(before_df.memory_usage(deep=True).sum() / 1024.0, 2)
+    mem_after = round(after_df.memory_usage(deep=True).sum() / 1024.0, 2)
+
+    return DatasetDiff(
+        rows_before=r_before,
+        rows_after=r_after,
+        rows_delta=r_after - r_before,
+        cols_before=c_before,
+        cols_after=c_after,
+        cols_delta=c_after - c_before,
+        columns_added=added,
+        columns_removed=removed,
+        missing_before=miss_before,
+        missing_after=miss_after,
+        missing_delta=miss_after - miss_before,
+        memory_before_kb=mem_before,
+        memory_after_kb=mem_after,
+    )
