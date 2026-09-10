@@ -273,3 +273,126 @@ def build_pdf_report(report_data: ExecutiveReportData) -> bytes:
 
     doc.build(story)
     return buf.getvalue()
+
+
+
+def build_html_dossier(
+    report_data: ExecutiveReportData,
+    df: pd.DataFrame,
+    plotly_figs: Optional[List[Any]] = None
+) -> str:
+    """
+    Generates a standalone, self-contained HTML executive report dossier with
+    responsive Distill styling and interactive Plotly visual charts.
+    """
+    kpi_cards_html = ""
+    for m in report_data.metrics:
+        kpi_cards_html += f"""
+        <div class="kpi-card">
+            <div class="kpi-label">{m.label}</div>
+            <div class="kpi-value">{m.value}</div>
+            <div class="kpi-subtext">{m.subtext}</div>
+        </div>
+        """
+
+    findings_html = "".join(f"<li>{f}</li>" for f in report_data.key_findings)
+    recommendations_html = "".join(f"<li>{r}</li>" for r in report_data.recommendations)
+
+    table_rows = ""
+    for r in report_data.column_summary:
+        table_rows += f"""
+        <tr>
+            <td style="font-weight:600;">{r['name']}</td>
+            <td><code>{r['dtype']}</code></td>
+            <td>{r['non_null']}</td>
+            <td>{r['unique']}</td>
+            <td>{r['null_pct']}</td>
+        </tr>
+        """
+
+    charts_html = ""
+    if plotly_figs:
+        for idx, fig in enumerate(plotly_figs):
+            try:
+                c_div = fig.to_html(full_html=False, include_plotlyjs="cdn" if idx == 0 else False)
+                charts_html += f'<div class="chart-container">{c_div}</div>'
+            except Exception:
+                pass
+
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{report_data.title} - {report_data.dataset_name}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+        body {{ font-family: 'Inter', -apple-system, sans-serif; background: #F8FAFC; color: #0F172A; padding: 40px 20px; line-height: 1.5; }}
+        .container {{ max-width: 1100px; margin: 0 auto; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }}
+        .header {{ display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #E2E8F0; padding-bottom: 24px; margin-bottom: 32px; }}
+        .title {{ font-size: 26px; font-weight: 700; color: #0F172A; letter-spacing: -0.02em; }}
+        .subtitle {{ font-size: 13px; color: #64748B; margin-top: 4px; }}
+        .badge {{ background: #EEF2FF; color: #4F46E5; border: 1px solid #E0E7FF; padding: 4px 10px; border-radius: 9999px; font-size: 12px; font-weight: 600; }}
+        .grid-4 {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 32px; }}
+        .kpi-card {{ background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 18px; }}
+        .kpi-label {{ font-size: 11px; font-weight: 600; color: #64748B; letter-spacing: 0.05em; text-transform: uppercase; }}
+        .kpi-value {{ font-size: 24px; font-weight: 700; color: #4F46E5; margin-top: 4px; }}
+        .kpi-subtext {{ font-size: 12px; color: #94A3B8; margin-top: 2px; }}
+        h2 {{ font-size: 16px; font-weight: 600; color: #1E293B; margin-bottom: 12px; }}
+        .section {{ margin-bottom: 32px; }}
+        ul {{ list-style-type: square; margin-left: 20px; color: #334155; font-size: 14px; line-height: 1.8; }}
+        table {{ width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }}
+        th {{ background: #F1F5F9; color: #475569; font-weight: 600; text-align: left; padding: 10px 12px; border: 1px solid #E2E8F0; }}
+        td {{ padding: 10px 12px; border: 1px solid #E2E8F0; color: #334155; }}
+        tr:nth-child(even) {{ background: #F8FAFC; }}
+        code {{ font-family: 'JetBrains Mono', monospace; font-size: 12px; background: #EEF2FF; color: #4338CA; padding: 2px 6px; border-radius: 4px; }}
+        .chart-container {{ margin-top: 20px; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; background: #FFFFFF; }}
+        @media print {{ body {{ background: #FFF; padding: 0; }} .container {{ border: none; box-shadow: none; padding: 0; }} }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <div class="title">{report_data.title}</div>
+                <div class="subtitle">Dataset: <strong>{report_data.dataset_name}</strong> &bull; Generated: {report_data.generated_at}</div>
+            </div>
+            <span class="badge">Distill Intelligence Dossier</span>
+        </div>
+
+        <div class="grid-4">
+            {kpi_cards_html}
+        </div>
+
+        <div class="section">
+            <h2>Executive Observations & Integrity Highlights</h2>
+            <ul>{findings_html}</ul>
+        </div>
+
+        <div class="section">
+            <h2>Dimension & Feature Schema Audit</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature Column</th>
+                        <th>Data Type</th>
+                        <th>Non-Null</th>
+                        <th>Cardinality</th>
+                        <th>Missing %</th>
+                    </tr>
+                </thead>
+                <tbody>{table_rows}</tbody>
+            </table>
+        </div>
+
+        {charts_html}
+
+        <div class="section" style="margin-top: 32px;">
+            <h2>Actionable Next Steps</h2>
+            <ul>{recommendations_html}</ul>
+        </div>
+    </div>
+</body>
+</html>"""
+    return html
