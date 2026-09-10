@@ -281,3 +281,90 @@ def run_multi_group_test(
         group_medians=medians,
         confidence_level=1.0 - alpha,
     )
+
+
+
+@dataclass
+class CorrelationPair:
+    var1: str
+    var2: str
+    coefficient: float
+    p_value: float
+    is_significant: bool
+    strength: str
+    significance_symbol: str
+
+
+def compute_correlation_significance(
+    df: pd.DataFrame,
+    method: str = "pearson",
+    alpha: float = 0.05
+) -> Tuple[pd.DataFrame, pd.DataFrame, List[CorrelationPair]]:
+    """
+    Computes both the correlation matrix and the corresponding p-value matrix for all
+    numeric columns, alongside ranked significant relationship pairs.
+    """
+    num_df = df.select_dtypes(include=[np.number]).dropna(how="all", axis=1)
+    cols = list(num_df.columns)
+    n = len(cols)
+
+    if n < 2:
+        empty = pd.DataFrame()
+        return empty, empty, []
+
+    corr_mat = pd.DataFrame(np.ones((n, n)), index=cols, columns=cols)
+    pval_mat = pd.DataFrame(np.zeros((n, n)), index=cols, columns=cols)
+    pairs: List[CorrelationPair] = []
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            c1, c2 = cols[i], cols[j]
+            valid = num_df[[c1, c2]].dropna()
+            if len(valid) >= 4:
+                if method == "spearman":
+                    r, p = stats.spearmanr(valid[c1], valid[c2])
+                else:
+                    r, p = stats.pearsonr(valid[c1], valid[c2])
+            else:
+                r, p = 0.0, 1.0
+
+            r = float(r)
+            p = float(p)
+
+            corr_mat.loc[c1, c2] = round(r, 4)
+            corr_mat.loc[c2, c1] = round(r, 4)
+            pval_mat.loc[c1, c2] = round(p, 6)
+            pval_mat.loc[c2, c1] = round(p, 6)
+
+            is_sig = p < alpha
+            abs_r = abs(r)
+            if abs_r >= 0.7:
+                strength = "Strong"
+            elif abs_r >= 0.4:
+                strength = "Moderate"
+            elif abs_r >= 0.2:
+                strength = "Weak"
+            else:
+                strength = "Negligible"
+
+            if p < 0.001:
+                stars = "***"
+            elif p < 0.01:
+                stars = "**"
+            elif p < 0.05:
+                stars = "*"
+            else:
+                stars = "ns"
+
+            pairs.append(CorrelationPair(
+                var1=c1,
+                var2=c2,
+                coefficient=round(r, 4),
+                p_value=round(p, 6),
+                is_significant=is_sig,
+                strength=strength,
+                significance_symbol=stars,
+            ))
+
+    pairs.sort(key=lambda x: abs(x.coefficient), reverse=True)
+    return corr_mat, pval_mat, pairs
