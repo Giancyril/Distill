@@ -71,3 +71,57 @@ def infer_task_type(df: pd.DataFrame, target_col: str) -> TaskType:
         return TaskType.CLASSIFICATION
 
     return TaskType.REGRESSION
+
+
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+
+
+def build_preprocessor(
+    df: pd.DataFrame,
+    target_col: str,
+    max_categories: int = 25
+) -> Tuple[ColumnTransformer, List[str], List[str]]:
+    """
+    Constructs an automated ColumnTransformer that handles numeric imputation/scaling
+    and categorical imputation/one-hot encoding.
+    Returns (preprocessor, numeric_features, categorical_features).
+    """
+    feature_df = df.drop(columns=[target_col])
+    numeric_features: List[str] = []
+    categorical_features: List[str] = []
+
+    for col in feature_df.columns:
+        # Skip pure id / high-cardinality string columns or timestamp-like
+        series = feature_df[col]
+        dtype_str = str(series.dtype).lower()
+        if any(num_type in dtype_str for num_type in ["int", "float", "double"]):
+            numeric_features.append(col)
+        else:
+            # Categorical if cardinality is reasonable
+            n_unique = series.nunique()
+            if 1 < n_unique <= max_categories:
+                categorical_features.append(col)
+
+    transformers = []
+    if numeric_features:
+        num_pipeline = Pipeline([
+            ("imputer", SimpleImputer(strategy="median")),
+            ("scaler", StandardScaler()),
+        ])
+        transformers.append(("num", num_pipeline, numeric_features))
+
+    if categorical_features:
+        cat_pipeline = Pipeline([
+            ("imputer", SimpleImputer(strategy="most_frequent")),
+            ("encoder", OneHotEncoder(handle_unknown="ignore", sparse_output=False)),
+        ])
+        transformers.append(("cat", cat_pipeline, categorical_features))
+
+    if not transformers:
+        raise ValueError("No viable numeric or categorical feature columns identified for modeling.")
+
+    preprocessor = ColumnTransformer(transformers=transformers, remainder="drop")
+    return preprocessor, numeric_features, categorical_features
