@@ -637,6 +637,41 @@ tab_overview, tab_chat, tab_health_page, tab_features, tab_automl, tab_stats, ta
 ])
 
 with tab_overview:
+
+    # === Executive AI Insights & Proactive Signals ===
+    insights_rep = generate_dataset_insights(df, health=health, eda=eda)
+    st.markdown("""
+    <div class="card-header-bar" style="margin-top:20px;">
+        <div>
+            <div class="card-overline">PROACTIVE INTELLIGENCE</div>
+            <div class="card-title-text">Autonomous AI Insights & Discovered Signals</div>
+        </div>
+        <span class="badge badge-indigo">Heuristic & Statistical Discovery</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if insights_rep.insights:
+        cols_ins = st.columns(min(3, len(insights_rep.insights)))
+        for idx, ins in enumerate(insights_rep.insights[:3]):
+            with cols_ins[idx % len(cols_ins)]:
+                badge_class = "badge-emerald" if ins.category == InsightCategory.OPPORTUNITY else (
+                    "badge-amber" if ins.category == InsightCategory.RISK else (
+                        "badge-crimson" if ins.category == InsightCategory.ANOMALY else "badge-indigo"
+                    )
+                )
+                st.markdown(f"""
+                <div class="distill-card" style="height:100%; display:flex; flex-direction:column; justify-content:space-between;">
+                    <div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <span class="badge {badge_class}">{ins.category.value}</span>
+                            <span style="font-size:11px; font-weight:600; color:#64748B;">Impact: {ins.impact_score}/10</span>
+                        </div>
+                        <div style="font-size:14px; font-weight:600; color:#0F172A; margin-bottom:6px; line-height:1.4;">{ins.headline}</div>
+                        <div style="font-size:12px; color:#475569; line-height:1.5;">{ins.narrative}</div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
     missing_pct = health.missing_percentage if health else 0.0
     dup_rows = health.duplicate_rows if health else 0
     num_profs = len(eda.numeric_profiles) if eda else 0
