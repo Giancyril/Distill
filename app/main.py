@@ -593,11 +593,12 @@ health = st.session_state.health_report
 eda = st.session_state.eda_report
 types = st.session_state.inferred_types
 
-tab_overview, tab_chat, tab_health_page, tab_automl, tab_explorer = st.tabs([
+tab_overview, tab_chat, tab_health_page, tab_automl, tab_stats, tab_explorer = st.tabs([
     "Overview Dashboard",
     "Conversational Workspace",
     "Data Health & Diagnostics",
     "Predictive Modeling Studio",
+    "Statistical Lab & Anomalies",
     "Raw Data Explorer",
 ])
 
@@ -1059,6 +1060,147 @@ with tab_automl:
                     </div>
                     """, unsafe_allow_html=True)
 
+
+
+with tab_stats:
+    st.markdown("""
+    <div class="card-header-bar">
+        <div>
+            <div class="card-overline">INFERENTIAL RIGOR</div>
+            <div class="card-title-text">Advanced Statistical Testing & Multidimensional Anomalies</div>
+        </div>
+        <span class="badge badge-cyan">Hypothesis Engine</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    stat_mode = st.radio(
+        "Investigation Mode",
+        options=["Two-Sample Hypothesis Test", "Normality & Distribution Check", "Significance Correlation Matrix", "Multivariate Anomaly Discovery"],
+        horizontal=True,
+        key="radio_stat_mode"
+    )
+
+    numeric_columns = list(df.select_dtypes(include=[np.number]).columns)
+    categorical_columns = list(df.select_dtypes(exclude=[np.number]).columns)
+
+    if stat_mode == "Two-Sample Hypothesis Test":
+        c_test1, c_test2, c_test3 = st.columns(3)
+        with c_test1:
+            numeric_target = st.selectbox("Metric to Compare (Numeric)", options=numeric_columns, key="hyp_num_target")
+        with c_test2:
+            grouping_col = st.selectbox("Grouping Variable (Categorical)", options=categorical_columns if categorical_columns else list(df.columns), key="hyp_group_col")
+        with c_test3:
+            unique_groups = list(df[grouping_col].dropna().astype(str).unique())[:10] if grouping_col in df.columns else []
+            if len(unique_groups) >= 2:
+                sel_g1 = st.selectbox("Group A", options=unique_groups, index=0, key="hyp_g1")
+                sel_g2 = st.selectbox("Group B", options=unique_groups, index=min(1, len(unique_groups)-1), key="hyp_g2")
+            else:
+                sel_g1, sel_g2 = None, None
+                st.warning("Selected grouping variable must have at least 2 distinct values.")
+
+        if sel_g1 and sel_g2 and sel_g1 != sel_g2:
+            s_a = df[df[grouping_col].astype(str) == sel_g1][numeric_target]
+            s_b = df[df[grouping_col].astype(str) == sel_g2][numeric_target]
+
+            try:
+                rec_type, rec_reason = recommend_hypothesis_test(s_a, s_b)
+                st.info(f"Recommended Statistical Test: **{rec_reason}**")
+                res = run_two_sample_test(s_a, s_b, name_a=f"{grouping_col}={sel_g1}", name_b=f"{grouping_col}={sel_g2}", test_type=rec_type)
+
+                sig_badge = '<span class="badge badge-emerald">Significant Difference (p < 0.05)</span>' if res.is_significant else '<span class="badge badge-slate">No Significant Difference (p >= 0.05)</span>'
+
+                st.markdown(f"""
+                <div class="distill-card" style="margin-top:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="font-size:16px; font-weight:600; color:#0F172A;">{res.test_name}</div>
+                        {sig_badge}
+                    </div>
+                    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; margin-top:12px;">
+                        <div style="background:#F8FAFC; padding:8px 12px; border-radius:6px;">
+                            <div style="font-size:11px; color:#64748B;">TEST STATISTIC</div>
+                            <div style="font-size:16px; font-weight:700; color:#0F172A;">{res.statistic}</div>
+                        </div>
+                        <div style="background:#F8FAFC; padding:8px 12px; border-radius:6px;">
+                            <div style="font-size:11px; color:#64748B;">P-VALUE</div>
+                            <div style="font-size:16px; font-weight:700; color:#4F46E5;">{res.p_value}</div>
+                        </div>
+                        <div style="background:#F8FAFC; padding:8px 12px; border-radius:6px;">
+                            <div style="font-size:11px; color:#64748B;">{res.group_names[0]} Mean</div>
+                            <div style="font-size:16px; font-weight:700; color:#0F172A;">{res.group_means[0]}</div>
+                        </div>
+                        <div style="background:#F8FAFC; padding:8px 12px; border-radius:6px;">
+                            <div style="font-size:11px; color:#64748B;">{res.group_names[1]} Mean</div>
+                            <div style="font-size:16px; font-weight:700; color:#0F172A;">{res.group_means[1]}</div>
+                        </div>
+                    </div>
+                    <p style="font-size:13px; color:#334155; margin:12px 0 0 0; line-height:1.5;">{res.interpretation}</p>
+                </div>
+                """, unsafe_allow_html=True)
+            except Exception as e:
+                st.error(f"Test failed: {e}")
+
+    elif stat_mode == "Normality & Distribution Check":
+        norm_col = st.selectbox("Select Continuous Metric", options=numeric_columns, key="norm_target_col")
+        if norm_col:
+            try:
+                norm_res = check_normality(df[norm_col], norm_col)
+                status_pill = '<span class="badge badge-emerald">Normal (Gaussian)</span>' if norm_res.is_normal else '<span class="badge badge-amber">Non-Normal Distribution</span>'
+                st.markdown(f"""
+                <div class="distill-card" style="margin-top:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="font-size:16px; font-weight:600; color:#0F172A;">Normality Assessment: {norm_col}</div>
+                        {status_pill}
+                    </div>
+                    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; margin-top:12px;">
+                        <div style="background:#F8FAFC; padding:8px 12px; border-radius:6px;">
+                            <div style="font-size:11px; color:#64748B;">P-VALUE</div>
+                            <div style="font-size:16px; font-weight:700; color:#4F46E5;">{norm_res.p_value}</div>
+                        </div>
+                        <div style="background:#F8FAFC; padding:8px 12px; border-radius:6px;">
+                            <div style="font-size:11px; color:#64748B;">STATISTIC</div>
+                            <div style="font-size:16px; font-weight:700; color:#0F172A;">{norm_res.statistic}</div>
+                        </div>
+                        <div style="background:#F8FAFC; padding:8px 12px; border-radius:6px;">
+                            <div style="font-size:11px; color:#64748B;">SKEWNESS</div>
+                            <div style="font-size:16px; font-weight:700; color:#0F172A;">{norm_res.skewness}</div>
+                        </div>
+                        <div style="background:#F8FAFC; padding:8px 12px; border-radius:6px;">
+                            <div style="font-size:11px; color:#64748B;">KURTOSIS</div>
+                            <div style="font-size:16px; font-weight:700; color:#0F172A;">{norm_res.kurtosis}</div>
+                        </div>
+                    </div>
+                    <p style="font-size:13px; color:#334155; margin:12px 0 0 0;">{norm_res.interpretation}</p>
+                </div>
+                """, unsafe_allow_html=True)
+
+                fig_hist = px.histogram(df, x=norm_col, marginal="box", nbins=30, color_discrete_sequence=["#4F46E5"])
+                fig_hist.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_family="Inter", height=320)
+                st.plotly_chart(fig_hist, use_container_width=True)
+            except Exception as e:
+                st.error(f"Normality analysis failed: {e}")
+
+    elif stat_mode == "Significance Correlation Matrix":
+        if len(numeric_columns) >= 2:
+            corr_m, pval_m, sig_pairs = compute_correlation_significance(df)
+            st.markdown("<div style='font-size:14px; font-weight:600; color:#0F172A; margin:12px 0 8px 0;'>Correlation Matrix Heatmap</div>", unsafe_allow_html=True)
+            fig_hm = px.imshow(
+                corr_m,
+                text_auto=".2f",
+                color_continuous_scale="RdBu_r",
+                zmin=-1, zmax=1,
+                aspect="auto"
+            )
+            fig_hm.update_layout(paper_bgcolor="rgba(0,0,0,0)", font_family="Inter", height=380)
+            st.plotly_chart(fig_hm, use_container_width=True)
+
+            st.markdown("<div style='font-size:14px; font-weight:600; color:#0F172A; margin:12px 0 8px 0;'>Statistically Significant Pairs Ranked</div>", unsafe_allow_html=True)
+            table_rows = [
+                {"Metric 1": p.var1, "Metric 2": p.var2, "Correlation r": p.coefficient, "p-value": p.p_value, "Strength": p.strength, "Sig Level": p.significance_symbol}
+                for p in sig_pairs if p.is_significant
+            ]
+            st.dataframe(pd.DataFrame(table_rows), use_container_width=True, hide_index=True)
+        else:
+            st.warning("Need at least 2 numeric columns for correlation analysis.")
 
 with tab_explorer:
     st.markdown(f"""
