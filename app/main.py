@@ -671,6 +671,10 @@ with tab_overview:
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
+                st.markdown("<div style='height:6px;'></div>", unsafe_allow_html=True)
+                if st.button(f"Explore: {ins.suggested_query[:32]}...", key=f"btn_chip_ins_{idx}", use_container_width=True, type="secondary"):
+                    st.session_state["pending_question"] = ins.suggested_query
+                    st.rerun()
 
     missing_pct = health.missing_percentage if health else 0.0
     dup_rows = health.duplicate_rows if health else 0
