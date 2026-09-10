@@ -153,3 +153,176 @@ def get_candidate_models(task_type: TaskType) -> Dict[str, Any]:
             "Decision Tree": DecisionTreeRegressor(max_depth=6, random_state=42),
             "K-Nearest Neighbors": KNeighborsRegressor(n_neighbors=5),
         }
+
+
+from sklearn.metrics import (
+    accuracy_score, precision_score, recall_score, f1_score,
+    mean_squared_error, mean_absolute_error, r2_score, confusion_matrix
+)
+
+
+def extract_feature_importances(
+    pipeline: Pipeline,
+    feature_names: List[str],
+    top_n: int = 15
+) -> List[Dict[str, Union[str, float]]]:
+    """Extracts ranked feature importances or coefficients from a fitted pipeline."""
+    model = pipeline.named_steps.get("model")
+    if model is None:
+        return []
+
+    importances = None
+    if hasattr(model, "feature_importances_"):
+        importances = model.feature_importances_
+    elif hasattr(model, "coef_"):
+        coef = model.coef_
+        if coef.ndim > 1:
+            importances = np.mean(np.abs(coef), axis=0)
+        else:
+            importances = np.abs(coef)
+
+    if importances is None or len(importances) == 0:
+        return []
+
+    # Match names if possible
+    n = min(len(feature_names), len(importances))
+    records = []
+    for i in range(n):
+        val = float(importances[i])
+        records.append({"feature": feature_names[i], "importance": round(val, 4)})
+
+    records.sort(key=lambda x: abs(x["importance"]), reverse=True)
+    return records[:top_n]
+
+
+def run_automl_tournament(
+    df: pd.DataFrame,
+    target_col: str,
+    task_type: Optional[TaskType] = None,
+    test_size: float = 0.2,
+    random_state: int = 42
+) -> TournamentResult:
+    """
+    Executes a tournament among 5 diverse ML algorithms, evaluates them on holdout test set,
+    and returns comprehensive rankings and the winning pipeline.
+    """
+    if task_type is None:
+        task_type = infer_task_type(df, target_col)
+
+    clean_df = df.dropna(subset=[target_col]).copy()
+    if len(clean_df) < 15:
+        raise ValueError("Dataset has fewer than 15 rows with target present; insufficient for ML.")
+
+    preprocessor, num_cols, cat_cols = build_preprocessor(clean_df, target_col)
+    feature_cols = num_cols + cat_cols
+
+    X = clean_df[feature_cols]
+    y = clean_df[target_col]
+
+    classes_list = None
+    if task_type == TaskType.CLASSIFICATION:
+        classes_list = [str(c) for c in np.unique(y)]
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=test_size, random_state=random_state
+    )
+
+    candidates = get_candidate_models(task_type)
+    evaluations: List[ModelEvaluation] = []
+    best_pipeline = None
+    best_score = -float("inf")
+    best_name = ""
+
+    # Fit preprocessor on X_train to get feature names
+    preprocessor.fit(X_train)
+    try:
+        transformed_feature_names = list(preprocessor.get_feature_names_out())
+    except Exception:
+        transformed_feature_names = feature_cols
+
+    for name, estimator in candidates.items():
+        start_t = time.time()
+        pipe = Pipeline([
+            ("prep", preprocessor),
+            ("model", estimator),
+        ])
+
+        try:
+            pipe.fit(X_train, y_train)
+            y_pred = pipe.predict(X_test)
+            fit_time = round(time.time() - start_t, 3)
+
+            metrics: Dict[str, float] = {}
+            cm = None
+            if task_type == TaskType.CLASSIFICATION:
+                acc = float(accuracy_score(y_test, y_pred))
+                f1 = float(f1_score(y_test, y_pred, average="weighted", zero_division=0))
+                prec = float(precision_score(y_test, y_pred, average="weighted", zero_division=0))
+                rec = float(recall_score(y_test, y_pred, average="weighted", zero_division=0))
+                metrics = {
+                    "Accuracy": round(acc, 4),
+                    "F1 Score (Weighted)": round(f1, 4),
+                    "Precision": round(prec, 4),
+                    "Recall": round(rec, 4),
+                }
+                cm = confusion_matrix(y_test, y_pred).tolist()
+                primary_score = f1
+            else:
+                rmse = float(np.sqrt(mean_squared_error(y_test, y_pred)))
+                mae = float(mean_absolute_error(y_test, y_pred))
+                r2 = float(r2_score(y_test, y_pred))
+                metrics = {
+                    "R² Score": round(r2, 4),
+                    "RMSE": round(rmse, 4),
+                    "MAE": round(mae, 4),
+                }
+                primary_score = r2
+
+            feat_imp = extract_feature_importances(pipe, transformed_feature_names)
+
+            evaluation = ModelEvaluation(
+                model_name=name,
+                task_type=task_type,
+                metrics=metrics,
+                feature_importances=feat_imp,
+                confusion_matrix=cm,
+                classes=classes_list,
+                fit_time_seconds=fit_time,
+            )
+            evaluations.append(evaluation)
+
+            if primary_score > best_score:
+                best_score = primary_score
+                best_pipeline = pipe
+                best_name = name
+
+        except Exception as err:
+            # Model failed on this configuration, record error
+            evaluations.append(ModelEvaluation(
+                model_name=name,
+                task_type=task_type,
+                metrics={"Error": 0.0},
+                best_params={"error": str(err)},
+            ))
+
+    # Rank evaluations
+    if task_type == TaskType.CLASSIFICATION:
+        evaluations.sort(key=lambda e: e.metrics.get("F1 Score (Weighted)", -1), reverse=True)
+    else:
+        evaluations.sort(key=lambda e: e.metrics.get("R² Score", -999), reverse=True)
+
+    summary = (
+        f"Evaluated {len(candidates)} models on target '{target_col}'. "
+        f"Winner: '{best_name}' with primary benchmark score {round(best_score, 4)}."
+    )
+
+    return TournamentResult(
+        target_column=target_col,
+        task_type=task_type,
+        feature_columns=feature_cols,
+        candidate_models=evaluations,
+        best_model_name=best_name,
+        best_pipeline=best_pipeline,
+        classes_=classes_list,
+        summary=summary,
+    )
