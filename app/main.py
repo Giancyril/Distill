@@ -307,8 +307,9 @@ code, pre, .font-mono {
 .sample-card {
     background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 2px 6px rgba(0,0,0,0.04);
-    height: 100%; display: flex; flex-direction: column; justify-content: space-between;
+    display: flex; flex-direction: column; justify-content: space-between;
     transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+    margin-bottom: 12px;
 }
 .sample-card:hover {
     border-color: #CBD5E1; box-shadow: 0 8px 20px rgba(0,0,0,0.08); transform: translateY(-2px);
@@ -566,6 +567,7 @@ if not has_dataset:
             </div>
         </div>
         """, unsafe_allow_html=True)
+        st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
         if st.button("Load Retail Sales Sample", use_container_width=True, type="primary", key="btn_empty_sales"):
             _load_data_source("sample_data/sales_clean.csv", "sales_clean.csv")
             st.rerun()
@@ -579,6 +581,7 @@ if not has_dataset:
             </div>
         </div>
         """, unsafe_allow_html=True)
+        st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
         if st.button("Load Churn Sample", use_container_width=True, type="secondary", key="btn_empty_churn"):
             _load_data_source("sample_data/customer_churn_messy.csv", "customer_churn_messy.csv")
             st.rerun()
