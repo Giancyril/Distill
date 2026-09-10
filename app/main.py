@@ -626,10 +626,11 @@ health = st.session_state.health_report
 eda = st.session_state.eda_report
 types = st.session_state.inferred_types
 
-tab_overview, tab_chat, tab_health_page, tab_automl, tab_stats, tab_explorer = st.tabs([
+tab_overview, tab_chat, tab_health_page, tab_features, tab_automl, tab_stats, tab_explorer = st.tabs([
     "Overview Dashboard",
     "Conversational Workspace",
     "Data Health & Diagnostics",
+    "Feature Studio & Time-Travel",
     "Predictive Modeling Studio",
     "Statistical Lab & Anomalies",
     "Raw Data Explorer",
@@ -964,6 +965,86 @@ with tab_health_page:
             st.rerun()
 
 
+
+
+with tab_features:
+    st.markdown("""
+    <div class="card-header-bar">
+        <div>
+            <div class="card-overline">FEATURE ENGINEERING & VERSIONING</div>
+            <div class="card-title-text">Feature Studio & Time-Travel Snapshot Stack</div>
+        </div>
+        <span class="badge badge-indigo">Data Pipeline</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if st.session_state.version_mgr is None and df is not None:
+        st.session_state.version_mgr = DatasetVersionManager(df, initial_name=st.session_state.filename or "Initial Ingest")
+
+    vm = st.session_state.version_mgr
+    if vm is not None:
+        c_act1, c_act2, c_act3 = st.columns([2, 2, 1])
+        with c_act1:
+            op_type = st.selectbox(
+                "Transformation Operation",
+                options=[
+                    "Log1p Transform (Reduce Skew)",
+                    "Square Root Transform",
+                    "Standard Scale (Z-Score)",
+                    "Min-Max Scale [0, 1]",
+                    "Quantile Discretization (Binning)",
+                    "Decompose Datetime",
+                    "Feature Interaction (Multiply)",
+                    "Drop Column",
+                ],
+                key="sb_op_type"
+            )
+        with c_act2:
+            num_cols = list(df.select_dtypes(include=[np.number]).columns)
+            all_cols = list(df.columns)
+            if "Log1p" in op_type or "Square Root" in op_type or "Scale" in op_type or "Binning" in op_type:
+                target_fcol = st.selectbox("Feature Column", options=num_cols if num_cols else all_cols, key="sb_fcol_target")
+            elif "Decompose" in op_type:
+                dt_candidates = [c for c in all_cols if "date" in c.lower() or "time" in c.lower()] or all_cols
+                target_fcol = st.selectbox("Datetime Column", options=dt_candidates, key="sb_fcol_dt")
+            elif "Interaction" in op_type:
+                target_fcol = st.selectbox("First Column", options=num_cols if num_cols else all_cols, key="sb_fcol_i1")
+                second_fcol = st.selectbox("Second Column", options=[c for c in num_cols if c != target_fcol] or all_cols, key="sb_fcol_i2")
+            else:
+                target_fcol = st.selectbox("Column to Drop", options=all_cols, key="sb_fcol_drop")
+
+        with c_act3:
+            st.markdown("<div style='height:28px;'></div>", unsafe_allow_html=True)
+            apply_btn = st.button("Apply Transform", type="primary", use_container_width=True, key="btn_exec_transform")
+
+        if apply_btn:
+            try:
+                if "Log1p" in op_type:
+                    new_df, act = apply_log_transform(vm.current_df, target_fcol)
+                elif "Square Root" in op_type:
+                    new_df, act = apply_sqrt_transform(vm.current_df, target_fcol)
+                elif "Standard Scale" in op_type:
+                    new_df, act = apply_standard_scale(vm.current_df, target_fcol)
+                elif "Min-Max" in op_type:
+                    new_df, act = apply_minmax_scale(vm.current_df, target_fcol)
+                elif "Binning" in op_type:
+                    new_df, act = apply_binning(vm.current_df, target_fcol, n_bins=4)
+                elif "Decompose" in op_type:
+                    new_df, act = apply_datetime_decompose(vm.current_df, target_fcol)
+                elif "Interaction" in op_type:
+                    new_df, act = apply_interaction(vm.current_df, target_fcol, second_fcol, operation="multiply")
+                elif "Drop" in op_type:
+                    new_df, act = apply_drop_column(vm.current_df, target_fcol)
+                else:
+                    new_df, act = vm.current_df, None
+
+                if act:
+                    vm.commit_transform(new_df, act)
+                    st.session_state.dataset = vm.current_df
+                    st.success(f"Committed: {act.description}")
+                    st.rerun()
+            except Exception as e:
+                st.error(f"Transformation failed: {e}")
 
 with tab_automl:
     st.markdown("""
