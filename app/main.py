@@ -1,5 +1,5 @@
 """
-app/main.py \u2013 Threadline Data Lab: Autonomous Tabular Intelligence Dashboard.
+app/main.py \u2013 Distill Data Lab: Autonomous Tabular Intelligence Dashboard.
 Refined UI: Pass 2 \u2014 depth, iconography, typography system.
 """
 from __future__ import annotations
@@ -29,13 +29,13 @@ from core.query_engine import run_query
 from core.sandbox import execute_in_sandbox
 
 st.set_page_config(
-    page_title="Threadline Data Lab",
+    page_title="Distill Data Lab",
     page_icon="\u26a1",
     layout="wide",
     initial_sidebar_state="expanded",
     menu_items={
         "Get help": "https://github.com",
-        "About": "# Threadline Data Lab\nAutonomous AI-augmented data analytics & sandboxed execution.",
+        "About": "# Distill Data Lab\nAutonomous AI-augmented data analytics & sandboxed execution.",
     },
 )
 
@@ -93,7 +93,7 @@ ICONS: dict = {
 }
 
 
-THREADLINE_CSS = """
+DISTILL_CSS = """
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -118,7 +118,7 @@ code, pre, .font-mono {
 }
 
 /* === Header \u2014 lifted elevation === */
-.threadline-header {
+.distill-header {
     background: #FAFAFF;
     border: 1px solid #E2E8F0;
     border-radius: 12px;
@@ -130,11 +130,6 @@ code, pre, .font-mono {
     box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.04);
 }
 .header-left { display: flex; align-items: center; gap: 12px; }
-.brand-icon-box {
-    width: 32px; height: 32px; border-radius: 8px; background: #4F46E5;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    box-shadow: 0 1px 2px rgba(79,70,229,0.25);
-}
 .brand-title {
     font-size: 26px; font-weight: 700; color: #0F172A;
     letter-spacing: -0.02em; margin: 0; line-height: 1.2;
@@ -222,13 +217,13 @@ code, pre, .font-mono {
 }
 
 /* === Content cards \u2014 real hover lift === */
-.threadline-card {
+.distill-card {
     background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px;
     padding: 16px 20px; margin-bottom: 16px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04);
     transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
-.threadline-card:hover {
+.distill-card:hover {
     border-color: #CBD5E1;
     box-shadow: 0 8px 20px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04);
     transform: translateY(-1px);
@@ -374,7 +369,7 @@ code, pre, .font-mono {
 ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 </style>
 """
-st.markdown(THREADLINE_CSS, unsafe_allow_html=True)
+st.markdown(DISTILL_CSS, unsafe_allow_html=True)
 
 
 def _init_session():
@@ -441,11 +436,10 @@ else:
     p3_cls, p3_dot, p3_txt = "status-pill-amber", "dot-amber", "Offline Sandbox Fallback"
 
 header_html = f"""
-<div class="threadline-header">
+<div class="distill-header">
     <div class="header-left">
-        <div class="brand-icon-box">{ICONS['zap']}</div>
         <div>
-            <h1 class="brand-title">Threadline <span style="color:#4F46E5;">Data Lab</span></h1>
+            <h1 class="brand-title">Distill <span style="color:#4F46E5;">Data Lab</span></h1>
             <p class="brand-subtitle">Autonomous Tabular Analytics &amp; AST Sandboxed Intelligence</p>
         </div>
     </div>
@@ -469,7 +463,7 @@ with st.sidebar:
             {ICONS['zap']}
         </div>
         <div>
-            <div style="font-size:13px;font-weight:600;color:#0F172A;line-height:1.2;font-family:'Inter',sans-serif;">Threadline Data</div>
+            <div style="font-size:13px;font-weight:600;color:#0F172A;line-height:1.2;font-family:'Inter',sans-serif;">Distill Data</div>
             <div style="font-size:11px;color:#64748B;font-weight:400;">Data Lab &bull; Enterprise Edition</div>
         </div>
     </div>
@@ -674,7 +668,7 @@ with tab_overview:
 
     if eda and eda.summary_narrative:
         st.markdown(f"""
-        <div class="threadline-card" style="border-left: 3px solid #4F46E5;">
+        <div class="distill-card" style="border-left: 3px solid #4F46E5;">
             <div class="card-header-bar">
                 <span class="card-title-text">{ICONS['sparkles']} AI Executive Synthesis</span>
                 <span class="badge-pill badge-indigo">Automated Profiling</span>
@@ -736,7 +730,7 @@ with tab_overview:
         st.markdown('<div class="card-overline" style="margin: 20px 0 10px;">Temporal Dimensions</div>', unsafe_allow_html=True)
         for dt_p in eda.datetime_profiles:
             st.markdown(f"""
-            <div class="threadline-card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;">
+            <div class="distill-card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;">
                 <div>
                     <strong style="color:#0F172A;font-size:13px;font-family:'Inter',sans-serif;">{dt_p.column}</strong>
                     <span style="color:#64748B;font-size:12px;margin-left:8px;">Frequency: <strong>{dt_p.detected_frequency}</strong></span>
@@ -751,7 +745,7 @@ with tab_overview:
 
 with tab_chat:
     st.markdown(f"""
-    <div class="threadline-card">
+    <div class="distill-card">
         <div class="card-header-bar">
             <span class="card-title-text">{ICONS['message_square']} Conversational Analysis Assistant</span>
             <span class="badge-pill badge-indigo">Zero Data Leakage &bull; Schema Prompts</span>
@@ -869,7 +863,7 @@ with tab_chat:
 
 with tab_health_page:
     st.markdown(f"""
-    <div class="threadline-card">
+    <div class="distill-card">
         <div class="card-header-bar">
             <span class="card-title-text">{ICONS['shield']} Data Quality &amp; Health Diagnostics</span>
             <span class="badge-pill badge-emerald">Non-Destructive Operations</span>
@@ -937,7 +931,7 @@ with tab_health_page:
 
 with tab_explorer:
     st.markdown(f"""
-    <div class="threadline-card">
+    <div class="distill-card">
         <div class="card-header-bar">
             <span class="card-title-text">{ICONS['table']} Interactive Raw Data Grid</span>
             <span class="badge-pill badge-slate">Viewing {len(df):,} records</span>
