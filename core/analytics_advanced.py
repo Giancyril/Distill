@@ -368,3 +368,70 @@ def compute_correlation_significance(
 
     pairs.sort(key=lambda x: abs(x.coefficient), reverse=True)
     return corr_mat, pval_mat, pairs
+
+
+from sklearn.ensemble import IsolationForest
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import RobustScaler
+
+
+def detect_multivariate_anomalies(
+    df: pd.DataFrame,
+    contamination: float = 0.05,
+    random_state: int = 42
+) -> AnomalyDetectionResult:
+    """
+    Detects complex multivariate outliers across numeric dimensions using Isolation Forest.
+    Unlike univariate IQR, this flags records where feature interactions are statistically abnormal.
+    """
+    num_df = df.select_dtypes(include=[np.number]).dropna(how="all", axis=1)
+    feature_cols = list(num_df.columns)
+
+    if len(feature_cols) < 2:
+        raise ValueError("Multivariate anomaly detection requires at least 2 numeric feature columns.")
+
+    if len(num_df) < 10:
+        raise ValueError("At least 10 rows are required for multivariate anomaly detection.")
+
+    # Impute missing values with median for anomaly detection
+    imputer = SimpleImputer(strategy="median")
+    scaler = RobustScaler()
+    X_imputed = imputer.fit_transform(num_df)
+    X_scaled = scaler.fit_transform(X_imputed)
+
+    iso = IsolationForest(
+        contamination=contamination,
+        random_state=random_state,
+        n_estimators=100
+    )
+    preds = iso.fit_predict(X_scaled)  # -1 for anomaly, 1 for inlier
+    raw_scores = iso.score_samples(X_scaled)  # higher = more normal, lower = more anomalous
+
+    # Transform scores: 0 (most normal) to 1 (most anomalous)
+    min_s = float(np.min(raw_scores))
+    max_s = float(np.max(raw_scores))
+    if max_s > min_s:
+        normalized_anomaly_scores = [round(float(1.0 - (s - min_s) / (max_s - min_s)), 4) for s in raw_scores]
+    else:
+        normalized_anomaly_scores = [0.0] * len(raw_scores)
+
+    outlier_mask = preds == -1
+    outlier_indices = list(num_df.index[outlier_mask])
+    outlier_count = int(np.sum(outlier_mask))
+    outlier_pct = round((outlier_count / len(num_df)) * 100, 2)
+
+    # Attach anomaly score and sort top anomalies
+    df_copy = df.copy()
+    df_copy["_anomaly_score"] = normalized_anomaly_scores
+    top_anomalous = df_copy.loc[outlier_indices].sort_values(by="_anomaly_score", ascending=False).head(20)
+
+    return AnomalyDetectionResult(
+        total_records=len(df),
+        outlier_count=outlier_count,
+        outlier_percentage=outlier_pct,
+        contamination_rate=contamination,
+        outlier_indices=outlier_indices,
+        anomaly_scores=normalized_anomaly_scores,
+        top_anomalous_records=top_anomalous,
+        feature_columns=feature_cols,
+    )
