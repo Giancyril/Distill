@@ -101,8 +101,8 @@ graph TD
         Stats --> AnomView["Isolation Forest & p-value Cards"]
         Insights --> ActionChips["Insight Cards & Drill-Down Chips"]
         Sandbox --> ChartEngine["core/charts.py (Plotly Engine)"]
-        Presentation_Export --> ReportLab["core/reporting.py (PDF / HTML Export)"]
-        Presentation_Export --> AppUI["app/main.py (Multi-Tab UI)"]
+        ChartEngine --> ReportLab["core/reporting.py (PDF / HTML Export)"]
+        ChartEngine --> AppUI["app/main.py (Multi-Tab UI)"]
     end
 ```
 
@@ -304,3 +304,4 @@ Scans cohorts to detect if any group's average metric diverges by >= 1.8x from t
 - Immutable dataset time-travel versioning (undo/redo stack, audit logs, and net diff comparisons).
 - Autonomous AI insights with Pareto driver discovery and dual-mode executive narrative synthesis.
 - ReportLab vector PDF generator and standalone interactive HTML dossier export.
+
