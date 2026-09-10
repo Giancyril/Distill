@@ -1202,6 +1202,69 @@ with tab_stats:
         else:
             st.warning("Need at least 2 numeric columns for correlation analysis.")
 
+    elif stat_mode == "Multivariate Anomaly Discovery":
+        if len(numeric_columns) >= 2:
+            c_anom1, c_anom2 = st.columns([3, 1])
+            with c_anom1:
+                contam = st.slider("Expected Contamination Rate (Anomaly %)", min_value=0.01, max_value=0.15, value=0.05, step=0.01, key="slider_contam")
+            with c_anom2:
+                st.markdown("<div style='height:28px;'></div>", unsafe_allow_html=True)
+                run_anom = st.button("Detect Anomalies", type="primary", use_container_width=True, key="btn_run_anomalies")
+
+            if run_anom or ("anomaly_res" in st.session_state and st.session_state.anomaly_res is not None):
+                if run_anom:
+                    with st.spinner("Executing Isolation Forest across multidimensional space..."):
+                        try:
+                            anom_res = detect_multivariate_anomalies(df, contamination=contam)
+                            st.session_state.anomaly_res = anom_res
+                        except Exception as e:
+                            st.error(f"Anomaly detection failed: {e}")
+                            st.session_state.anomaly_res = None
+
+                anom_res = st.session_state.get("anomaly_res")
+                if anom_res:
+                    st.markdown(f"""
+                    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:12px;">
+                        <div class="kpi-card">
+                            <div class="kpi-label">TOTAL RECORDS AUDITED</div>
+                            <div class="kpi-value">{anom_res.total_records}</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">OUTLIERS FLAGGED</div>
+                            <div class="kpi-value" style="color:#EF4444;">{anom_res.outlier_count}</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">OUTLIER RATIO</div>
+                            <div class="kpi-value" style="color:#F59E0B;">{anom_res.outlier_percentage}%</div>
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                    col_sc1, col_sc2 = st.columns(2)
+                    feat_x = col_sc1.selectbox("Projection Axis X", options=anom_res.feature_columns, index=0, key="anom_x")
+                    feat_y = col_sc2.selectbox("Projection Axis Y", options=anom_res.feature_columns, index=min(1, len(anom_res.feature_columns)-1), key="anom_y")
+
+                    plot_df = df.copy()
+                    plot_df["Status"] = ["Anomaly" if i in anom_res.outlier_indices else "Inlier" for i in df.index]
+                    plot_df["Anomaly Score"] = anom_res.anomaly_scores
+
+                    fig_anom = px.scatter(
+                        plot_df,
+                        x=feat_x,
+                        y=feat_y,
+                        color="Status",
+                        color_discrete_map={"Inlier": "#94A3B8", "Anomaly": "#EF4444"},
+                        hover_data=["Anomaly Score"],
+                        title="Multivariate Isolation Forest Projection",
+                    )
+                    fig_anom.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_family="Inter", height=380)
+                    st.plotly_chart(fig_anom, use_container_width=True)
+
+                    st.markdown("<div style='font-size:14px; font-weight:600; color:#0F172A; margin:12px 0 8px 0;'>Top Flagged Anomalies</div>", unsafe_allow_html=True)
+                    st.dataframe(anom_res.top_anomalous_records, use_container_width=True)
+        else:
+            st.warning("Need at least 2 numeric features for multivariate anomaly analysis.")
+
 with tab_explorer:
     st.markdown(f"""
     <div class="distill-card">
