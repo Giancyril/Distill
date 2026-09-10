@@ -459,9 +459,6 @@ st.markdown(header_html, unsafe_allow_html=True)
 with st.sidebar:
     st.markdown(f"""
     <div class="sidebar-brand-card">
-        <div style="width:28px;height:28px;border-radius:6px;background:#4F46E5;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            {ICONS['zap']}
-        </div>
         <div>
             <div style="font-size:13px;font-weight:600;color:#0F172A;line-height:1.2;font-family:'Inter',sans-serif;">Distill Data</div>
             <div style="font-size:11px;color:#64748B;font-weight:400;">Data Lab &bull; Enterprise Edition</div>
