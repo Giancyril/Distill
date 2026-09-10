@@ -125,3 +125,31 @@ def build_preprocessor(
 
     preprocessor = ColumnTransformer(transformers=transformers, remainder="drop")
     return preprocessor, numeric_features, categorical_features
+
+
+import time
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor, GradientBoostingClassifier, GradientBoostingRegressor
+from sklearn.linear_model import LogisticRegression, Ridge
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
+from sklearn.model_selection import train_test_split
+
+
+def get_candidate_models(task_type: TaskType) -> Dict[str, Any]:
+    """Returns candidate estimators tailored for the task type."""
+    if task_type == TaskType.CLASSIFICATION:
+        return {
+            "Random Forest": RandomForestClassifier(n_estimators=75, max_depth=10, random_state=42),
+            "Gradient Boosting": GradientBoostingClassifier(n_estimators=60, max_depth=4, random_state=42),
+            "Logistic Regression": LogisticRegression(max_iter=500, random_state=42),
+            "Decision Tree": DecisionTreeClassifier(max_depth=6, random_state=42),
+            "K-Nearest Neighbors": KNeighborsClassifier(n_neighbors=5),
+        }
+    else:
+        return {
+            "Random Forest": RandomForestRegressor(n_estimators=75, max_depth=10, random_state=42),
+            "Gradient Boosting": GradientBoostingRegressor(n_estimators=60, max_depth=4, random_state=42),
+            "Ridge Regression": Ridge(alpha=1.0, random_state=42),
+            "Decision Tree": DecisionTreeRegressor(max_depth=6, random_state=42),
+            "K-Nearest Neighbors": KNeighborsRegressor(n_neighbors=5),
+        }
