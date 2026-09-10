@@ -103,3 +103,70 @@ def recommend_hypothesis_test(
             return HypothesisTestType.WELCHS_TTEST, "Welch's t-test (Normality met, unequal variances)"
     else:
         return HypothesisTestType.MANN_WHITNEY_U, "Mann-Whitney U test (Non-parametric: distributions non-normal)"
+
+
+
+def run_two_sample_test(
+    group_a: pd.Series,
+    group_b: pd.Series,
+    name_a: str = "Group A",
+    name_b: str = "Group B",
+    test_type: Optional[HypothesisTestType] = None,
+    alpha: float = 0.05
+) -> TestResult:
+    """
+    Executes a two-sample hypothesis test comparing group_a and group_b.
+    """
+    clean_a = pd.to_numeric(group_a, errors="coerce").dropna()
+    clean_b = pd.to_numeric(group_b, errors="coerce").dropna()
+
+    if len(clean_a) < 3 or len(clean_b) < 3:
+        raise ValueError("Both groups must contain at least 3 valid numeric values.")
+
+    if test_type is None:
+        test_type, _ = recommend_hypothesis_test(clean_a, clean_b)
+
+    mean_a = float(clean_a.mean())
+    mean_b = float(clean_b.mean())
+    med_a = float(clean_a.median())
+    med_b = float(clean_b.median())
+
+    if test_type == HypothesisTestType.TWO_SAMPLE_TTEST:
+        stat, p_val = stats.ttest_ind(clean_a, clean_b, equal_var=True)
+        t_name = "Independent Samples Two-Sample Student's t-Test"
+    elif test_type == HypothesisTestType.WELCHS_TTEST:
+        stat, p_val = stats.ttest_ind(clean_a, clean_b, equal_var=False)
+        t_name = "Welch's t-Test (Unequal Variances)"
+    elif test_type == HypothesisTestType.MANN_WHITNEY_U:
+        stat, p_val = stats.mannwhitneyu(clean_a, clean_b, alternative="two-sided")
+        t_name = "Mann-Whitney U Test (Non-Parametric)"
+    else:
+        raise ValueError(f"Unsupported two-sample test type: {test_type}")
+
+    stat = float(stat)
+    p_val = float(p_val)
+    is_sig = bool(p_val < alpha)
+
+    if is_sig:
+        interp = (
+            f"Statistically significant difference detected between {name_a} and {name_b} "
+            f"(p = {p_val:.4e} < {alpha}). The null hypothesis of identical distributions is rejected."
+        )
+    else:
+        interp = (
+            f"No statistically significant difference detected between {name_a} and {name_b} "
+            f"(p = {p_val:.4f} >= {alpha}). Insufficient evidence to reject the null hypothesis."
+        )
+
+    return TestResult(
+        test_name=t_name,
+        statistic=round(stat, 4),
+        p_value=round(p_val, 6),
+        is_significant=is_sig,
+        interpretation=interp,
+        group_names=[name_a, name_b],
+        sample_sizes=[len(clean_a), len(clean_b)],
+        group_means=[round(mean_a, 4), round(mean_b, 4)],
+        group_medians=[round(med_a, 4), round(med_b, 4)],
+        confidence_level=1.0 - alpha,
+    )
