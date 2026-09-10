@@ -260,3 +260,64 @@ def generate_dataset_insights(
         insights=selected_insights,
         executive_summary=summary,
     )
+
+
+import os
+
+
+def synthesize_executive_narrative(
+    df: pd.DataFrame,
+    report: InsightReport,
+    api_key: Optional[str] = None
+) -> str:
+    """
+    Synthesizes an executive-grade business narrative summarizing the discovered insights.
+    Uses OpenAI if key is present, otherwise falls back to deterministic template synthesis.
+    """
+    key = api_key or os.environ.get("OPENAI_API_KEY")
+
+    if key:
+        try:
+            from openai import OpenAI
+            client = OpenAI(api_key=key)
+
+            bullets = "\n".join(f"- [{i.category.value}] {i.headline}: {i.narrative}" for i in report.insights)
+            system_prompt = (
+                "You are an elite Principal Data Scientist & Management Consultant at McKinsey/Distill. "
+                "Synthesize an executive intelligence briefing based on the discovered insights. "
+                "Structure in 3 concise paragraphs: (1) Core Business Drivers, (2) Critical Vulnerabilities & Risks, "
+                "and (3) Strategic Recommendations. Use precise, authoritative language. Do not use generic filler."
+            )
+            user_prompt = f"Dataset Shape: {df.shape[0]:,} rows x {df.shape[1]} columns.\n\nDiscovered Insights:\n{bullets}"
+
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                temperature=0.2,
+                max_tokens=600,
+            )
+            return response.choices[0].message.content.strip()
+        except Exception:
+            pass  # Fall back to heuristic
+
+    # Offline Heuristic Synthesis Fallback
+    paragraphs = []
+    paragraphs.append(
+        f"**Executive Overview**: An autonomous audit of the dataset across {df.shape[0]:,} records and {df.shape[1]} features "
+        f"identified {report.total_insights} strategic intelligence signals ({report.critical_count} critical priority)."
+    )
+
+    drivers = [i for i in report.insights if i.category in (InsightCategory.DRIVER, InsightCategory.OPPORTUNITY)]
+    if drivers:
+        d_text = "; ".join(d.headline for d in drivers[:2])
+        paragraphs.append(f"**Key Growth & Driver Signals**: {d_text}. These dimensions constitute the primary variance engines within the observation space.")
+
+    risks = [i for i in report.insights if i.category in (InsightCategory.RISK, InsightCategory.ANOMALY)]
+    if risks:
+        r_text = "; ".join(r.headline for r in risks[:2])
+        paragraphs.append(f"**Data Health & Operational Vulnerabilities**: {r_text}. Prioritize resolution of these integrity anomalies to safeguard downstream model inference.")
+
+    return "\n\n".join(paragraphs)
