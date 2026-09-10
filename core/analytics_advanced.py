@@ -173,7 +173,7 @@ def run_two_sample_test(
 
 
 
-def test_normality(series: pd.Series, column_name: str) -> NormalityResult:
+def check_normality(series: pd.Series, column_name: str) -> NormalityResult:
     """
     Tests whether a continuous variable follows a normal distribution.
     Uses Shapiro-Wilk for n < 5000, and D'Agostino-Pearson for n >= 5000.
