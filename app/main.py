@@ -515,6 +515,31 @@ with st.sidebar:
         </div>
         """, unsafe_allow_html=True)
 
+        st.markdown('<div class="sidebar-section-title" style="margin-top:16px;">Export Intelligence</div>', unsafe_allow_html=True)
+        with st.expander("Executive Dossier Downloads", expanded=False):
+            bundle = generate_report_bundle(
+                df,
+                filename=st.session_state.filename or "dataset.csv",
+                health=health_side,
+                eda=eda_side
+            )
+            st.download_button(
+                label="Download PDF Report",
+                data=bundle["pdf_bytes"],
+                file_name=bundle["pdf_filename"],
+                mime="application/pdf",
+                use_container_width=True,
+                key="btn_dl_pdf_side",
+            )
+            st.download_button(
+                label="Download HTML Dossier",
+                data=bundle["html_str"],
+                file_name=bundle["html_filename"],
+                mime="text/html",
+                use_container_width=True,
+                key="btn_dl_html_side",
+            )
+
         st.markdown('<div class="sidebar-section-title">OpenAI Engine Config</div>', unsafe_allow_html=True)
         if openai_ready:
             st.markdown(f"""
