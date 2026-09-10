@@ -396,3 +396,31 @@ def build_html_dossier(
 </body>
 </html>"""
     return html
+
+
+
+def generate_report_bundle(
+    df: pd.DataFrame,
+    filename: str = "dataset.csv",
+    health: Optional[DataHealthReport] = None,
+    eda: Optional[EDAReport] = None,
+    plotly_figs: Optional[List[Any]] = None
+) -> Dict[str, Any]:
+    """
+    Convenience orchestrator generating both vector PDF and HTML dossier in memory.
+    Returns a dict with 'pdf_bytes', 'html_str', and suggested file names.
+    """
+    stem = filename.rsplit(".", 1)[0] if "." in filename else filename
+    clean_stem = "".join(c for c in stem if c.isalnum() or c in ("-", "_")).strip() or "distill_report"
+
+    rep_data = extract_report_data(df, filename=filename, health=health, eda=eda)
+    pdf_bytes = build_pdf_report(rep_data)
+    html_str = build_html_dossier(rep_data, df, plotly_figs=plotly_figs)
+
+    return {
+        "report_data": rep_data,
+        "pdf_bytes": pdf_bytes,
+        "html_str": html_str,
+        "pdf_filename": f"{clean_stem}_executive_dossier.pdf",
+        "html_filename": f"{clean_stem}_interactive_dossier.html",
+    }
