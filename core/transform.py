@@ -170,3 +170,97 @@ def apply_binning(
         description=f"Binned '{col}' into {n_bins} intervals ({strategy}) -> '{out_name}'",
     )
     return df_out, action
+
+
+
+def apply_datetime_decompose(
+    df: pd.DataFrame,
+    col: str,
+    components: Optional[List[str]] = None
+) -> Tuple[pd.DataFrame, TransformAction]:
+    """Extracts temporal components (month, day, dayofweek, is_weekend, quarter) from datetime."""
+    df_out = df.copy()
+    if components is None:
+        components = ["month", "day", "dayofweek", "is_weekend"]
+
+    dt_series = pd.to_datetime(df_out[col], errors="coerce")
+    created_cols = []
+
+    if "year" in components:
+        c_name = f"{col}_year"
+        df_out[c_name] = dt_series.dt.year
+        created_cols.append(c_name)
+
+    if "month" in components:
+        c_name = f"{col}_month"
+        df_out[c_name] = dt_series.dt.month
+        created_cols.append(c_name)
+
+    if "day" in components:
+        c_name = f"{col}_day"
+        df_out[c_name] = dt_series.dt.day
+        created_cols.append(c_name)
+
+    if "dayofweek" in components:
+        c_name = f"{col}_dayofweek"
+        df_out[c_name] = dt_series.dt.dayofweek
+        created_cols.append(c_name)
+
+    if "is_weekend" in components:
+        c_name = f"{col}_is_weekend"
+        df_out[c_name] = (dt_series.dt.dayofweek >= 5).astype(int)
+        created_cols.append(c_name)
+
+    action = TransformAction(
+        action_type=TransformType.DATETIME_DECOMPOSE,
+        column=col,
+        parameters={"created_columns": created_cols},
+        description=f"Extracted temporal features from '{col}': {', '.join(created_cols)}",
+    )
+    return df_out, action
+
+
+def apply_interaction(
+    df: pd.DataFrame,
+    col1: str,
+    col2: str,
+    operation: str = "multiply",
+    new_col: Optional[str] = None
+) -> Tuple[pd.DataFrame, TransformAction]:
+    """Generates multiplicative or ratio feature interactions."""
+    df_out = df.copy()
+    s1 = pd.to_numeric(df_out[col1], errors="coerce").fillna(0)
+    s2 = pd.to_numeric(df_out[col2], errors="coerce").fillna(0)
+
+    if operation == "multiply":
+        out_name = new_col or f"{col1}_x_{col2}"
+        df_out[out_name] = s1 * s2
+        desc = f"Created interaction product '{col1}' * '{col2}' -> '{out_name}'"
+    elif operation == "ratio":
+        out_name = new_col or f"{col1}_per_{col2}"
+        df_out[out_name] = s1 / (s2 + 1e-6)
+        desc = f"Created ratio '{col1}' / '{col2}' -> '{out_name}'"
+    else:
+        raise ValueError(f"Unsupported interaction operation: {operation}")
+
+    action = TransformAction(
+        action_type=TransformType.INTERACTION,
+        column=col1,
+        target_column=out_name,
+        parameters={"col2": col2, "operation": operation},
+        description=desc,
+    )
+    return df_out, action
+
+
+def apply_drop_column(df: pd.DataFrame, col: str) -> Tuple[pd.DataFrame, TransformAction]:
+    """Safely drops a redundant or leakage column."""
+    if col not in df.columns:
+        raise ValueError(f"Column '{col}' not found.")
+    df_out = df.drop(columns=[col])
+    action = TransformAction(
+        action_type=TransformType.DROP_COLUMN,
+        column=col,
+        description=f"Dropped column '{col}' from dataset",
+    )
+    return df_out, action
