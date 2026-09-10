@@ -170,3 +170,114 @@ def run_two_sample_test(
         group_medians=[round(med_a, 4), round(med_b, 4)],
         confidence_level=1.0 - alpha,
     )
+
+
+
+def test_normality(series: pd.Series, column_name: str) -> NormalityResult:
+    """
+    Tests whether a continuous variable follows a normal distribution.
+    Uses Shapiro-Wilk for n < 5000, and D'Agostino-Pearson for n >= 5000.
+    """
+    clean = pd.to_numeric(series, errors="coerce").dropna()
+    if len(clean) < 8:
+        raise ValueError(f"Column '{column_name}' needs at least 8 non-null observations for normality testing.")
+
+    skew = float(stats.skew(clean))
+    kurt = float(stats.kurtosis(clean))
+
+    if len(clean) < 5000:
+        stat, p_val = stats.shapiro(clean)
+    else:
+        stat, p_val = stats.normaltest(clean)
+
+    stat = float(stat)
+    p_val = float(p_val)
+    is_norm = bool(p_val > 0.05)
+
+    if is_norm:
+        interp = (
+            f"'{column_name}' is consistent with a Gaussian distribution (p = {p_val:.4f} > 0.05). "
+            f"Skewness = {skew:.2f}, Kurtosis = {kurt:.2f}."
+        )
+    else:
+        interp = (
+            f"'{column_name}' departs significantly from normality (p = {p_val:.4e} <= 0.05). "
+            f"Skewness = {skew:.2f}, Kurtosis = {kurt:.2f}. Non-parametric methods recommended."
+        )
+
+    return NormalityResult(
+        column=column_name,
+        statistic=round(stat, 4),
+        p_value=round(p_val, 6),
+        is_normal=is_norm,
+        skewness=round(skew, 2),
+        kurtosis=round(kurt, 2),
+        interpretation=interp,
+    )
+
+
+def run_multi_group_test(
+    groups: List[pd.Series],
+    group_names: List[str],
+    test_type: Optional[HypothesisTestType] = None,
+    alpha: float = 0.05
+) -> TestResult:
+    """
+    Compares 3 or more independent groups using One-Way ANOVA or Kruskal-Wallis.
+    """
+    if len(groups) < 2:
+        raise ValueError("At least 2 groups required for multi-group comparison.")
+
+    cleaned_groups = [pd.to_numeric(g, errors="coerce").dropna() for g in groups]
+    for idx, g in enumerate(cleaned_groups):
+        if len(g) < 3:
+            raise ValueError(f"Group '{group_names[idx]}' has fewer than 3 valid values.")
+
+    # Infer ANOVA vs Kruskal-Wallis if not specified
+    if test_type is None:
+        all_normal = all(
+            (stats.shapiro(g[:500])[1] > 0.05) if len(g) >= 8 else True
+            for g in cleaned_groups
+        )
+        test_type = HypothesisTestType.ANOVA_ONE_WAY if all_normal else HypothesisTestType.KRUSKAL_WALLIS
+
+    means = [round(float(g.mean()), 4) for g in cleaned_groups]
+    medians = [round(float(g.median()), 4) for g in cleaned_groups]
+    sizes = [len(g) for g in cleaned_groups]
+
+    if test_type == HypothesisTestType.ANOVA_ONE_WAY:
+        stat, p_val = stats.f_oneway(*cleaned_groups)
+        t_name = "One-Way Analysis of Variance (ANOVA F-Test)"
+    elif test_type == HypothesisTestType.KRUSKAL_WALLIS:
+        stat, p_val = stats.kruskal(*cleaned_groups)
+        t_name = "Kruskal-Wallis H-Test (Non-Parametric Multi-Group)"
+    else:
+        raise ValueError(f"Unsupported multi-group test: {test_type}")
+
+    stat = float(stat)
+    p_val = float(p_val)
+    is_sig = bool(p_val < alpha)
+
+    if is_sig:
+        interp = (
+            f"Statistically significant variance across groups detected by {t_name} "
+            f"(p = {p_val:.4e} < {alpha}). At least one group differs significantly."
+        )
+    else:
+        interp = (
+            f"No statistically significant difference detected across groups "
+            f"(p = {p_val:.4f} >= {alpha}). Insufficient evidence to reject homogeneity."
+        )
+
+    return TestResult(
+        test_name=t_name,
+        statistic=round(stat, 4),
+        p_value=round(p_val, 6),
+        is_significant=is_sig,
+        interpretation=interp,
+        group_names=group_names,
+        sample_sizes=sizes,
+        group_means=means,
+        group_medians=medians,
+        confidence_level=1.0 - alpha,
+    )
